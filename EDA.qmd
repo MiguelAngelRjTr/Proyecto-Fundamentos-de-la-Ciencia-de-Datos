@@ -1,0 +1,417 @@
+---
+title: "Análisis exploratorio del catálogo de Steam"
+author: "Miguel Angel Rojas Torres"
+date: "11/25/2025"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    number-sections: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+---
+```{r}
+# Chunk de configuración general
+library(readr)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(stringr)
+
+steam <- read_csv("data/steam.csv")
+
+glimpse(steam)
+```
+# Lectura y entendimiento de los datos
+
+## Lectura del fichero y estructura general
+
+En esta sección se importa el fichero `steam.csv` y se inspecciona su estructura básica. El archivo contiene información de videojuegos publicados en la plataforma Steam.
+```{r}
+n_filas <- nrow(steam)
+n_columnas <- ncol(steam)
+
+n_filas
+n_columnas
+
+```
+El conjunto de datos contiene `r n_filas` observaciones (videojuegos) y `r n_columnas` variables. A continuación se muestra un resumen numérico global y el recuento de valores ausentes por columna.
+```{r}
+summary(steam)
+
+sapply(steam, function(x) sum(is.na(x)))
+
+```
+En este caso no se observan valores ausentes en ninguna de las variables del dataset.
+
+## Descripción de variables principales
+
+Cada fila del fichero corresponde a un videojuego identificado por su appid. Las variables más relevantes son:
+
+- **appid:** identificador numérico entero único del videojuego en Steam.
+
+- **name:** nombre comercial del juego.
+
+- **release_date:** fecha de lanzamiento en la plataforma, leída ya como objeto de tipo fecha.
+
+- **english:** indicador binario (0 o 1) de disponibilidad en inglés.
+
+- **developer:** estudio o desarrollador principal.
+
+- **publisher:** editor o distribuidora.
+
+- **platforms:** plataformas soportadas, codificadas como una cadena separada por punto y coma (por ejemplo, windows;mac;linux).
+
+- **required_age:** edad mínima requerida o recomendada (entero, típicamente 0 o 18).
+
+- **categories:** categorías funcionales del juego (por ejemplo, multijugador, logros, cooperativo), en formato de lista separada por punto y coma.
+
+- **genres:** géneros principales del juego (acción, aventura, etc.), también como lista de etiquetas separadas por punto y coma.
+
+- **steamspy_tags:** etiquetas agregadas procedentes de SteamSpy, codificadas igualmente como lista en texto.
+
+- **achievements:** número de logros disponibles.
+
+- **positive_ratings:** recuento de valoraciones positivas agregadas.
+
+- **negative_ratings:** recuento de valoraciones negativas agregadas.
+
+- **average_playtime:** tiempo medio de juego por usuario que posee el juego, en minutos.
+
+- **median_playtime:** tiempo mediano de juego por usuario que posee el juego, en minutos.
+
+- **owners:** intervalo del número estimado de propietarios (por ejemplo, 0-20000, 20000-50000), codificado como cadena.
+
+- **price:** precio del juego en la moneda de referencia (variable numérica continua).
+ 
+## Sobre la fuente de datos
+
+El fichero steam.csv recoge información agregada sobre `r n_filas` videojuegos disponibles en la plataforma de distribución digital Steam. La unidad de análisis es el juego individual, identificado por su appid.
+
+Las variables combinan:
+
+- **Metadatos básicos:** nombre, desarrollador, editor, fecha de lanzamiento.
+
+- **Características de disponibilidad:** idioma, plataformas soportadas, edad requerida.
+
+- **Información agregada de comportamiento:** valoraciones positivas y negativas, tiempos de juego, número aproximado de propietarios.
+
+- **Etiquetas y clasificación:** géneros, categorías y etiquetas SteamSpy.
+
+Los datos están agregados a nivel de juego; no se dispone de información individual de usuarios. Algunas variables (por ejemplo, owners y steamspy_tags) derivan de procesos de estimación o de agregación externos, lo que introduce limitaciones y cierta incertidumbre en su interpretación cuantitativa.
+
+# Preparación y transformaciones iniciales
+
+Antes de profundizar en el análisis exploratorio, se realizan algunas transformaciones mínimas:
+
+- Confirmar que release_date está en formato fecha.
+
+- Crear la variable release_year.
+
+- Tratar owners como factor ordenado.
+```{r}
+steam <- steam %>%
+mutate(
+release_year = year(release_date),
+owners = factor(owners, levels = sort(unique(owners)), ordered = TRUE)
+)
+
+summary(select(steam, release_date, release_year, owners))
+
+```
+
+# Análisis univariado
+
+En este apartado se analizan variables numéricas y categóricas de manera aislada.
+
+## Variables numéricas
+
+Se seleccionan las variables numéricas principales: precio, valoraciones, tiempos de juego, logros y edad requerida.
+```{r}
+num_vars <- steam %>%
+select(price, positive_ratings, negative_ratings,
+average_playtime, median_playtime,
+achievements, required_age)
+
+summary(num_vars)
+
+```
+A partir de estos resultados se observa:
+
+- **Precio (price):**
+
+  - Media aproximada: `r round(mean(steam$price), 2)`
+
+  - Mediana: `r median(steam$price)`
+
+  - Primer cuartil: `r quantile(steam$price, 0.25)`
+
+  - Tercer cuartil: `r quantile(steam$price, 0.75)`
+
+  - Mínimo: `r min(steam$price)`
+
+  - Máximo: `r max(steam$price)`
+  
+La distribución es fuertemente asimétrica hacia la derecha. Una proporción relevante de juegos es gratuita:
+```{r}
+prop_gratis <- mean(steam$price == 0)
+prop_gratis
+
+```
+Esto supone aproximadamente un `r round(prop_gratis * 100, 2)`% de juegos con precio cero.
+
+- **Valoraciones (positive_ratings, negative_ratings):**
+
+  Los recuentos de valoraciones positivas y negativas presentan valores     muy extremos: algunos juegos superan los 2,6 millones de valoraciones     positivas y casi 500 000 negativas. La mayoría de los juegos, sin         embargo, se sitúa en rangos de pocos decenas de valoraciones.
+
+- **Tiempos de juego (average_playtime, median_playtime):**
+
+  Una proporción muy elevada de juegos presenta tiempos de juego medio y    mediano iguales a 0:
+```{r}
+prop_avg_zero <- mean(steam$average_playtime == 0)
+prop_med_zero <- mean(steam$median_playtime == 0)
+prop_avg_zero
+prop_med_zero
+
+```
+Ambas proporciones son aproximadamente `r round(prop_avg_zero * 100, 2)`%, lo que indica que para la mayoría de títulos no se dispone de información significativa de tiempo de juego o bien que el uso registrado es muy reducido.
+
+- **Logros (achievements):**
+
+  La mediana de logros es relativamente baja (alrededor de 7), pero el      máximo se aproxima a los 10 000 logros, lo que muestra una distribución   muy dispersa.
+
+- **Edad requerida (required_age):**
+
+  La práctica totalidad de los juegos tiene required_age = 0, con una       minoría restringida a 18 años u otras edades:
+```{r}
+table(steam$required_age)
+mean(steam$required_age == 0)
+
+```
+La proporción de juegos sin restricción de edad explícita (required_age = 0) es de aproximadamente `r round(mean(steam$required_age == 0) * 100, 2)`%.
+
+Como ejemplo, se representa la distribución del precio, truncando a precios menores de 100 unidades para mejorar la legibilidad.
+```{r}
+steam %>%
+  filter(price < 100) %>%
+  ggplot(aes(x = price)) +
+  geom_histogram(
+    bins = 40,
+    fill = "steelblue",
+    color = "white"
+  ) +
+  labs(
+  title = "Distribución del precio (truncado a precios < 100)",
+  x = "Precio",
+  y = "Frecuencia"
+  )
+
+```
+Se observa una fuerte concentración de juegos en los rangos de precio bajos, con una cola larga hacia valores altos.
+
+## Variables categóricas
+
+Se analizan algunas variables categóricas clave: english, owners y platforms.
+```{r}
+table(steam$english)
+prop.table(table(steam$english))
+
+```
+El indicador english está fuertemente desbalanceado: aproximadamente un `r round(mean(steam$english == 1) * 100, 2)`% de los juegos están disponibles en inglés.
+
+Para owners, se estudia la distribución de los intervalos de propietarios:
+```{r}
+owners_counts <- sort(table(steam$owners))
+owners_counts
+prop.table(owners_counts)
+
+```
+El intervalo 0-20000 concentra la mayoría de los juegos.
+```{r}
+owners_counts["0-20000"]
+owners_counts["0-20000"] / nrow(steam)
+
+```
+Aproximadamente un `r round(owners_counts["0-20000"] / nrow(steam) * 100, 2)`% de los títulos se sitúa en este intervalo, lo que indica que la mayor parte del catálogo tiene un número relativamente bajo de propietarios.
+
+En cuanto a platforms, se analizan las combinaciones más frecuentes:
+```{r}
+head(sort(table(steam$platforms), decreasing = TRUE), 10)
+
+```
+La combinación solo windows es claramente dominante, seguida de windows;mac;linux y windows;mac. Esto refleja el peso de Windows como plataforma principal de distribución.
+
+Finalmente, se observa el número de juegos por año de lanzamiento:
+```{r}
+steam %>%
+  count(release_year) %>%
+    arrange(release_year) %>%
+      print(n = Inf)
+
+```
+y se representa gráficamente.
+```{r}
+steam %>%
+  count(release_year) %>%
+    ggplot(aes(x = release_year, y = n)) +
+    geom_col(
+      bins = 40,
+      fill = "steelblue",
+      color = "white"
+    ) +
+    labs(
+    title = "Número de juegos lanzados por año",
+    x = "Año de lanzamiento",
+    y = "Número de juegos"
+    )
+
+```
+Los años de lanzamiento oscilan entre `r min(steam$release_year)` y `r max(steam$release_year)`. A partir de aproximadamente 2014 el número de títulos crece de forma muy acusada, con picos en los años 2016, 2017 y 2018.
+
+# Análisis bi y multivariado
+
+## Relación entre precio y valoraciones
+
+Se explora la relación entre el precio y el número de valoraciones positivas. Dado que existen valores extremos, se filtran precios muy altos y se aplica escala logarítmica a las valoraciones.
+
+```{r}
+steam %>%
+  filter(price < 100, positive_ratings > 0) %>%
+    ggplot(aes(x = price, y = positive_ratings)) +
+    geom_point(
+      alpha = 0.1,
+      size = 0.8,
+      colour = "steelblue",
+      position = position_jitter(width = 0.5, height = 0.1)
+    ) +
+    scale_y_log10() +
+    labs(
+    title = "Relación entre precio y valoraciones positivas",
+    x = "Precio",
+    y = "Valoraciones positivas (escala log10)"
+    )
+
+```
+Para cuantificar la relación lineal se calcula la matriz de correlaciones entre variables numéricas seleccionadas:
+```{r}
+cor_matrix <- steam %>%
+  select(price, positive_ratings, negative_ratings,
+  average_playtime, median_playtime,
+  achievements) %>%
+    cor(use = "pairwise.complete.obs")
+
+cor_matrix
+
+```
+La correlación entre price y positive_ratings es baja (en torno a 0.04). Sin embargo, las valoraciones positivas y negativas están muy correlacionadas entre sí (correlación alrededor de 0.76), lo que indica que los juegos más populares acumulan simultáneamente muchas opiniones de ambos signos.
+
+La correlación entre average_playtime y median_playtime es alta (en torno a 0.91), lo que refleja que ambas medidas recogen un patrón similar de uso.
+
+## Tiempo de juego y valoraciones positivas
+
+Se estudia la relación entre el tiempo medio de juego y el número de valoraciones positivas, utilizando transformaciones logarítmicas dada la fuerte asimetría de ambas variables.
+```{r}
+steam %>%
+  filter(average_playtime > 0, positive_ratings > 0) %>%
+    ggplot(aes(x = average_playtime, y = positive_ratings)) +
+    geom_point(
+      alpha = 0.5,
+      size = 0.8,
+      colour = "steelblue",
+      position = position_jitter(width = 0.2, height = 0.1)
+      ) +
+    scale_x_log10() +
+    scale_y_log10() +
+    labs(
+    title = "Tiempo medio de juego vs valoraciones positivas",
+    x = "Tiempo medio de juego (min, log10)",
+    y = "Valoraciones positivas (log10)"
+    )
+  
+```
+Se observa que existe cierta tendencia a que juegos con mayores tiempos de juego acumulen más valoraciones, pero la dispersión es elevada, lo que sugiere que intervienen otros factores (género, calidad percibida, marketing, etc.).
+ 
+## Precio por intervalo de propietarios
+
+Aunque owners representa intervalos de recuento y no valores exactos, se puede utilizar como factor ordenado para estudiar la distribución de precios según el rango de popularidad aproximado.
+```{r}
+steam %>%
+  filter(price < 100) %>%
+    ggplot(aes(x = owners, y = price)) +
+    geom_boxplot(
+      fill = "steelblue",     
+      alpha = 0.6,            
+      outlier.colour = "black"
+    ) +
+    coord_flip() +
+    labs(
+    title = "Distribución del precio por intervalo de propietarios",
+    x = "Intervalo de propietarios",
+    y = "Precio"
+    )
+
+```
+Este gráfico permite valorar si existen diferencias sistemáticas de precio entre juegos muy poco populares (por ejemplo, 0-20000 propietarios) y juegos con grandes bases de usuarios.
+
+# Problemas encontrados en los datos
+
+A partir del análisis realizado pueden identificarse varios problemas y limitaciones relevantes:
+
+**1. Variables multietiqueta codificadas en texto**
+
+Las variables platforms, categories, genres y steamspy_tags contienen     listas de etiquetas separadas por punto y coma. Esta codificación         dificulta el análisis detallado a nivel de etiqueta individual y exige    transformaciones adicionales.
+
+**2. Propietarios (owners) como intervalo categórico**
+
+La variable owners recoge el número de propietarios mediante intervalos (por ejemplo, 0-20000, 20000-50000) y no como recuento exacto. Esto limita el uso de técnicas que requieran datos numéricos precisos y obliga a tratar owners como variable ordinal.
+
+**3. Alta proporción de tiempos de juego nulos**
+
+Aproximadamente un `r round(prop_avg_zero * 100, 2)`% de los juegos presenta average_playtime y median_playtime igual a 0. Esta mezcla de posibles “falta de uso” y “falta de información” complica la interpretación de los tiempos de juego y puede sesgar análisis que utilicen estas variables.
+
+**4. Desbalanceo severo en el indicador de idioma**
+
+Alrededor de un `r round(mean(steam$english == 1) * 100, 2)`% de los juegos están disponibles en inglés. Esta falta de equilibrio reduce la utilidad analítica de la variable english en muchos contextos, ya que proporciona poca variabilidad.
+
+**5. Presencia de valores atípicos extremos**
+
+Existen juegos con precios muy elevados (hasta `r max(steam$price)` unidades monetarias) y con números de valoraciones extremadamente altos (más de 2,6 millones de valoraciones positivas y cerca de 500 000 negativas). Estos outliers pueden influir de forma desproporcionada en estadísticos y modelos si no se tratan con técnicas robustas o transformaciones adecuadas.
+
+**6. Ausencia de información a nivel de usuario**
+
+Los datos están agregados a nivel de juego, sin identificadores de usuario ni características individuales. Esto impide estudiar comportamiento y preferencias a nivel de jugador y limita el análisis a patrones globales del catálogo.
+
+# ¿Qué nos dicen los datos?
+
+Integrando los resultados del análisis exploratorio, se pueden resumir las principales conclusiones en varios puntos:
+
+- **Crecimiento temporal del catálogo**
+
+  El número de lanzamientos por año aumenta de forma muy notable a partir   de los años recientes. Entre `r min(steam$release_year)` y `r             max(steam$release_year)` se observa un cambio claro, con incrementos      especialmente pronunciados a partir de 2014, y picos de varios miles de   juegos al año en 2016, 2017 y 2018. Esto es coherente con un proceso de   expansión rápida del catálogo, probablemente asociado a la entrada de     numerosos desarrolladores independientes.
+
+- **Estructura de precios muy asimétrica**
+
+  El precio medio se sitúa en torno a `r round(mean(steam$price), 2)`       unidades monetarias, con una mediana de `r median(steam$price)` y un      máximo de `r max(steam$price)`. La mayoría de los juegos se concentra en   rangos de precio bajos, mientras que los precios muy elevados son poco    frecuentes y constituyen valores atípicos. Aproximadamente un `r          round(prop_gratis * 100, 2)` por ciento de los títulos son gratuitos, lo   que evidencia la importancia del modelo free-to-play y de estrategias de   bajo precio.
+
+- **Distribución muy desigual de la popularidad**
+
+  El intervalo de propietarios 0-20000 engloba alrededor de un `r           round(owners_counts["0-20000"] / nrow(steam) * 100, 2)`% del              catálogo. Solo una minoría de juegos alcanza los intervalos de            propietarios más altos. Lo mismo ocurre con las valoraciones: algunos     títulos acumulan millones de valoraciones, mientras que la mayoría        apenas reúne unas pocas decenas. Esto sugiere un mercado muy              concentrado, en el que pocos juegos captan gran parte de la atención.
+
+- **Relación débil entre precio y número de valoraciones**
+
+  La correlación casi nula entre price y positive_ratings indica que, de    forma lineal, el precio no explica bien la popularidad medida por número   de valoraciones. Existen juegos muy valorados en prácticamente todos los   rangos de precios, lo que refuerza la idea de que otros factores          (calidad percibida, género, marketing, reputación del estudio, etc.)      tienen un papel determinante.
+
+- **Tiempos de juego concentrados en unos pocos títulos**
+
+  Aunque existe una asociación positiva entre tiempo de juego medio y       número de valoraciones, la dispersión es elevada y la gran mayoría de     juegos presenta tiempos de juego nulos o muy bajos. Esto vuelve a         señalar la existencia de un conjunto relativamente pequeño de títulos     capaces de retener a los jugadores durante muchas horas, frente a un      catálogo amplio con uso muy limitado.
+
+- **Dominio del idioma inglés y de la plataforma Windows**
+
+  El hecho de que más del `r round(mean(steam$english == 1) * 100, 2)`% de   los juegos esté disponible en inglés y que la configuración de            plataformas más frecuente sea solo windows muestra un claro sesgo hacia   esta combinación idioma-plataforma. Aunque existen juegos                 multiplataforma y con otros idiomas, su presencia relativa es menor.
+
+En conjunto, los datos describen un catálogo en expansión, con un volumen creciente de lanzamientos y una distribución altamente desigual de atención y uso. La estructura de precios, tiempos de juego y valoraciones sugiere un entorno muy competitivo, en el que solo una fracción reducida de títulos alcanza una popularidad masiva.

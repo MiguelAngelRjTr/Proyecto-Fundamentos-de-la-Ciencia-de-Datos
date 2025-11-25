@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Miguel Angel Rojas Torres">
+<meta name="dcterms.date" content="2025-11-25">
+
+<title>Análisis exploratorio del catálogo de Steam</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="EDA_files/libs/clipboard/clipboard.min.js"></script>
+<script src="EDA_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="EDA_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="EDA_files/libs/quarto-html/popper.min.js"></script>
+<script src="EDA_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="EDA_files/libs/quarto-html/anchor.min.js"></script>
+<link href="EDA_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="EDA_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="EDA_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="EDA_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="EDA_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#lectura-y-entendimiento-de-los-datos" id="toc-lectura-y-entendimiento-de-los-datos" class="nav-link active" data-scroll-target="#lectura-y-entendimiento-de-los-datos"><span class="header-section-number">1</span> Lectura y entendimiento de los datos</a>
+  <ul class="collapse">
+  <li><a href="#lectura-del-fichero-y-estructura-general" id="toc-lectura-del-fichero-y-estructura-general" class="nav-link" data-scroll-target="#lectura-del-fichero-y-estructura-general"><span class="header-section-number">1.1</span> Lectura del fichero y estructura general</a></li>
+  <li><a href="#descripción-de-variables-principales" id="toc-descripción-de-variables-principales" class="nav-link" data-scroll-target="#descripción-de-variables-principales"><span class="header-section-number">1.2</span> Descripción de variables principales</a></li>
+  <li><a href="#sobre-la-fuente-de-datos" id="toc-sobre-la-fuente-de-datos" class="nav-link" data-scroll-target="#sobre-la-fuente-de-datos"><span class="header-section-number">1.3</span> Sobre la fuente de datos</a></li>
+  </ul></li>
+  <li><a href="#preparación-y-transformaciones-iniciales" id="toc-preparación-y-transformaciones-iniciales" class="nav-link" data-scroll-target="#preparación-y-transformaciones-iniciales"><span class="header-section-number">2</span> Preparación y transformaciones iniciales</a></li>
+  <li><a href="#análisis-univariado" id="toc-análisis-univariado" class="nav-link" data-scroll-target="#análisis-univariado"><span class="header-section-number">3</span> Análisis univariado</a>
+  <ul class="collapse">
+  <li><a href="#variables-numéricas" id="toc-variables-numéricas" class="nav-link" data-scroll-target="#variables-numéricas"><span class="header-section-number">3.1</span> Variables numéricas</a></li>
+  <li><a href="#variables-categóricas" id="toc-variables-categóricas" class="nav-link" data-scroll-target="#variables-categóricas"><span class="header-section-number">3.2</span> Variables categóricas</a></li>
+  </ul></li>
+  <li><a href="#análisis-bi-y-multivariado" id="toc-análisis-bi-y-multivariado" class="nav-link" data-scroll-target="#análisis-bi-y-multivariado"><span class="header-section-number">4</span> Análisis bi y multivariado</a>
+  <ul class="collapse">
+  <li><a href="#relación-entre-precio-y-valoraciones" id="toc-relación-entre-precio-y-valoraciones" class="nav-link" data-scroll-target="#relación-entre-precio-y-valoraciones"><span class="header-section-number">4.1</span> Relación entre precio y valoraciones</a></li>
+  <li><a href="#tiempo-de-juego-y-valoraciones-positivas" id="toc-tiempo-de-juego-y-valoraciones-positivas" class="nav-link" data-scroll-target="#tiempo-de-juego-y-valoraciones-positivas"><span class="header-section-number">4.2</span> Tiempo de juego y valoraciones positivas</a></li>
+  <li><a href="#precio-por-intervalo-de-propietarios" id="toc-precio-por-intervalo-de-propietarios" class="nav-link" data-scroll-target="#precio-por-intervalo-de-propietarios"><span class="header-section-number">4.3</span> Precio por intervalo de propietarios</a></li>
+  </ul></li>
+  <li><a href="#problemas-encontrados-en-los-datos" id="toc-problemas-encontrados-en-los-datos" class="nav-link" data-scroll-target="#problemas-encontrados-en-los-datos"><span class="header-section-number">5</span> Problemas encontrados en los datos</a></li>
+  <li><a href="#qué-nos-dicen-los-datos" id="toc-qué-nos-dicen-los-datos" class="nav-link" data-scroll-target="#qué-nos-dicen-los-datos"><span class="header-section-number">6</span> ¿Qué nos dicen los datos?</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Análisis exploratorio del catálogo de Steam</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Miguel Angel Rojas Torres </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 25, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<hr>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Chunk de configuración general</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>steam <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/steam.csv"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(steam)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 27,075
+Columns: 18
+$ appid            &lt;dbl&gt; 10, 20, 30, 40, 50, 60, 70, 80, 130, 220, 240, 280, 3…
+$ name             &lt;chr&gt; "Counter-Strike", "Team Fortress Classic", "Day of De…
+$ release_date     &lt;date&gt; 2000-11-01, 1999-04-01, 2003-05-01, 2001-06-01, 1999…
+$ english          &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ developer        &lt;chr&gt; "Valve", "Valve", "Valve", "Valve", "Gearbox Software…
+$ publisher        &lt;chr&gt; "Valve", "Valve", "Valve", "Valve", "Valve", "Valve",…
+$ platforms        &lt;chr&gt; "windows;mac;linux", "windows;mac;linux", "windows;ma…
+$ required_age     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ categories       &lt;chr&gt; "Multi-player;Online Multi-Player;Local Multi-Player;…
+$ genres           &lt;chr&gt; "Action", "Action", "Action", "Action", "Action", "Ac…
+$ steamspy_tags    &lt;chr&gt; "Action;FPS;Multiplayer", "Action;FPS;Multiplayer", "…
+$ achievements     &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 147, 0, 54, 0, 0, 0, 1…
+$ positive_ratings &lt;dbl&gt; 124534, 3318, 3416, 1273, 5250, 2758, 27755, 12120, 3…
+$ negative_ratings &lt;dbl&gt; 3339, 633, 398, 267, 288, 684, 1100, 1439, 420, 2419,…
+$ average_playtime &lt;dbl&gt; 17612, 277, 187, 258, 624, 175, 1300, 427, 361, 691, …
+$ median_playtime  &lt;dbl&gt; 317, 62, 34, 184, 415, 10, 83, 43, 205, 402, 400, 214…
+$ owners           &lt;chr&gt; "10000000-20000000", "5000000-10000000", "5000000-100…
+$ price            &lt;dbl&gt; 7.19, 3.99, 3.99, 3.99, 3.99, 3.99, 7.19, 7.19, 3.99,…</code></pre>
+</div>
+</div>
+<section id="lectura-y-entendimiento-de-los-datos" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Lectura y entendimiento de los datos</h1>
+<section id="lectura-del-fichero-y-estructura-general" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="lectura-del-fichero-y-estructura-general"><span class="header-section-number">1.1</span> Lectura del fichero y estructura general</h2>
+<p>En esta sección se importa el fichero <code>steam.csv</code> y se inspecciona su estructura básica. El archivo contiene información de videojuegos publicados en la plataforma Steam.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n_filas <span class="ot">&lt;-</span> <span class="fu">nrow</span>(steam)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>n_columnas <span class="ot">&lt;-</span> <span class="fu">ncol</span>(steam)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>n_filas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 27075</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>n_columnas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 18</code></pre>
+</div>
+</div>
+<p>El conjunto de datos contiene 27075 observaciones (videojuegos) y 18 variables. A continuación se muestra un resumen numérico global y el recuento de valores ausentes por columna.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(steam)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     appid             name            release_date           english      
+ Min.   :     10   Length:27075       Min.   :1997-06-30   Min.   :0.0000  
+ 1st Qu.: 401230   Class :character   1st Qu.:2016-04-04   1st Qu.:1.0000  
+ Median : 599070   Mode  :character   Median :2017-08-08   Median :1.0000  
+ Mean   : 596204                      Mean   :2016-12-31   Mean   :0.9811  
+ 3rd Qu.: 798760                      3rd Qu.:2018-06-06   3rd Qu.:1.0000  
+ Max.   :1069460                      Max.   :2019-05-01   Max.   :1.0000  
+  developer          publisher          platforms          required_age    
+ Length:27075       Length:27075       Length:27075       Min.   : 0.0000  
+ Class :character   Class :character   Class :character   1st Qu.: 0.0000  
+ Mode  :character   Mode  :character   Mode  :character   Median : 0.0000  
+                                                          Mean   : 0.3549  
+                                                          3rd Qu.: 0.0000  
+                                                          Max.   :18.0000  
+  categories           genres          steamspy_tags       achievements    
+ Length:27075       Length:27075       Length:27075       Min.   :   0.00  
+ Class :character   Class :character   Class :character   1st Qu.:   0.00  
+ Mode  :character   Mode  :character   Mode  :character   Median :   7.00  
+                                                          Mean   :  45.25  
+                                                          3rd Qu.:  23.00  
+                                                          Max.   :9821.00  
+ positive_ratings  negative_ratings average_playtime   median_playtime   
+ Min.   :      0   Min.   :     0   Min.   :     0.0   Min.   :     0.0  
+ 1st Qu.:      6   1st Qu.:     2   1st Qu.:     0.0   1st Qu.:     0.0  
+ Median :     24   Median :     9   Median :     0.0   Median :     0.0  
+ Mean   :   1001   Mean   :   211   Mean   :   149.8   Mean   :   146.1  
+ 3rd Qu.:    126   3rd Qu.:    42   3rd Qu.:     0.0   3rd Qu.:     0.0  
+ Max.   :2644404   Max.   :487076   Max.   :190625.0   Max.   :190625.0  
+    owners              price        
+ Length:27075       Min.   :  0.000  
+ Class :character   1st Qu.:  1.690  
+ Mode  :character   Median :  3.990  
+                    Mean   :  6.078  
+                    3rd Qu.:  7.190  
+                    Max.   :421.990  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(steam, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           appid             name     release_date          english 
+               0                0                0                0 
+       developer        publisher        platforms     required_age 
+               0                6                0                0 
+      categories           genres    steamspy_tags     achievements 
+               0                0                0                0 
+positive_ratings negative_ratings average_playtime  median_playtime 
+               0                0                0                0 
+          owners            price 
+               0                0 </code></pre>
+</div>
+</div>
+<p>En este caso no se observan valores ausentes en ninguna de las variables del dataset.</p>
+</section>
+<section id="descripción-de-variables-principales" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="descripción-de-variables-principales"><span class="header-section-number">1.2</span> Descripción de variables principales</h2>
+<p>Cada fila del fichero corresponde a un videojuego identificado por su appid. Las variables más relevantes son:</p>
+<ul>
+<li><p><strong>appid:</strong> identificador numérico entero único del videojuego en Steam.</p></li>
+<li><p><strong>name:</strong> nombre comercial del juego.</p></li>
+<li><p><strong>release_date:</strong> fecha de lanzamiento en la plataforma, leída ya como objeto de tipo fecha.</p></li>
+<li><p><strong>english:</strong> indicador binario (0 o 1) de disponibilidad en inglés.</p></li>
+<li><p><strong>developer:</strong> estudio o desarrollador principal.</p></li>
+<li><p><strong>publisher:</strong> editor o distribuidora.</p></li>
+<li><p><strong>platforms:</strong> plataformas soportadas, codificadas como una cadena separada por punto y coma (por ejemplo, windows;mac;linux).</p></li>
+<li><p><strong>required_age:</strong> edad mínima requerida o recomendada (entero, típicamente 0 o 18).</p></li>
+<li><p><strong>categories:</strong> categorías funcionales del juego (por ejemplo, multijugador, logros, cooperativo), en formato de lista separada por punto y coma.</p></li>
+<li><p><strong>genres:</strong> géneros principales del juego (acción, aventura, etc.), también como lista de etiquetas separadas por punto y coma.</p></li>
+<li><p><strong>steamspy_tags:</strong> etiquetas agregadas procedentes de SteamSpy, codificadas igualmente como lista en texto.</p></li>
+<li><p><strong>achievements:</strong> número de logros disponibles.</p></li>
+<li><p><strong>positive_ratings:</strong> recuento de valoraciones positivas agregadas.</p></li>
+<li><p><strong>negative_ratings:</strong> recuento de valoraciones negativas agregadas.</p></li>
+<li><p><strong>average_playtime:</strong> tiempo medio de juego por usuario que posee el juego, en minutos.</p></li>
+<li><p><strong>median_playtime:</strong> tiempo mediano de juego por usuario que posee el juego, en minutos.</p></li>
+<li><p><strong>owners:</strong> intervalo del número estimado de propietarios (por ejemplo, 0-20000, 20000-50000), codificado como cadena.</p></li>
+<li><p><strong>price:</strong> precio del juego en la moneda de referencia (variable numérica continua).</p></li>
+</ul>
+</section>
+<section id="sobre-la-fuente-de-datos" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="sobre-la-fuente-de-datos"><span class="header-section-number">1.3</span> Sobre la fuente de datos</h2>
+<p>El fichero steam.csv recoge información agregada sobre 27075 videojuegos disponibles en la plataforma de distribución digital Steam. La unidad de análisis es el juego individual, identificado por su appid.</p>
+<p>Las variables combinan:</p>
+<ul>
+<li><p><strong>Metadatos básicos:</strong> nombre, desarrollador, editor, fecha de lanzamiento.</p></li>
+<li><p><strong>Características de disponibilidad:</strong> idioma, plataformas soportadas, edad requerida.</p></li>
+<li><p><strong>Información agregada de comportamiento:</strong> valoraciones positivas y negativas, tiempos de juego, número aproximado de propietarios.</p></li>
+<li><p><strong>Etiquetas y clasificación:</strong> géneros, categorías y etiquetas SteamSpy.</p></li>
+</ul>
+<p>Los datos están agregados a nivel de juego; no se dispone de información individual de usuarios. Algunas variables (por ejemplo, owners y steamspy_tags) derivan de procesos de estimación o de agregación externos, lo que introduce limitaciones y cierta incertidumbre en su interpretación cuantitativa.</p>
+</section>
+</section>
+<section id="preparación-y-transformaciones-iniciales" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Preparación y transformaciones iniciales</h1>
+<p>Antes de profundizar en el análisis exploratorio, se realizan algunas transformaciones mínimas:</p>
+<ul>
+<li><p>Confirmar que release_date está en formato fecha.</p></li>
+<li><p>Crear la variable release_year.</p></li>
+<li><p>Tratar owners como factor ordenado.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>steam <span class="ot">&lt;-</span> steam <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="at">release_year =</span> <span class="fu">year</span>(release_date),</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="at">owners =</span> <span class="fu">factor</span>(owners, <span class="at">levels =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(owners)), <span class="at">ordered =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">select</span>(steam, release_date, release_year, owners))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  release_date         release_year             owners     
+ Min.   :1997-06-30   Min.   :1997   0-20000       :18596  
+ 1st Qu.:2016-04-04   1st Qu.:2016   20000-50000   : 3059  
+ Median :2017-08-08   Median :2017   50000-100000  : 1695  
+ Mean   :2016-12-31   Mean   :2016   100000-200000 : 1386  
+ 3rd Qu.:2018-06-06   3rd Qu.:2018   200000-500000 : 1272  
+ Max.   :2019-05-01   Max.   :2019   500000-1000000:  513  
+                                     (Other)       :  554  </code></pre>
+</div>
+</div>
+</section>
+<section id="análisis-univariado" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Análisis univariado</h1>
+<p>En este apartado se analizan variables numéricas y categóricas de manera aislada.</p>
+<section id="variables-numéricas" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="variables-numéricas"><span class="header-section-number">3.1</span> Variables numéricas</h2>
+<p>Se seleccionan las variables numéricas principales: precio, valoraciones, tiempos de juego, logros y edad requerida.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>num_vars <span class="ot">&lt;-</span> steam <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(price, positive_ratings, negative_ratings,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>average_playtime, median_playtime,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>achievements, required_age)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(num_vars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     price         positive_ratings  negative_ratings average_playtime  
+ Min.   :  0.000   Min.   :      0   Min.   :     0   Min.   :     0.0  
+ 1st Qu.:  1.690   1st Qu.:      6   1st Qu.:     2   1st Qu.:     0.0  
+ Median :  3.990   Median :     24   Median :     9   Median :     0.0  
+ Mean   :  6.078   Mean   :   1001   Mean   :   211   Mean   :   149.8  
+ 3rd Qu.:  7.190   3rd Qu.:    126   3rd Qu.:    42   3rd Qu.:     0.0  
+ Max.   :421.990   Max.   :2644404   Max.   :487076   Max.   :190625.0  
+ median_playtime     achievements      required_age    
+ Min.   :     0.0   Min.   :   0.00   Min.   : 0.0000  
+ 1st Qu.:     0.0   1st Qu.:   0.00   1st Qu.: 0.0000  
+ Median :     0.0   Median :   7.00   Median : 0.0000  
+ Mean   :   146.1   Mean   :  45.25   Mean   : 0.3549  
+ 3rd Qu.:     0.0   3rd Qu.:  23.00   3rd Qu.: 0.0000  
+ Max.   :190625.0   Max.   :9821.00   Max.   :18.0000  </code></pre>
+</div>
+</div>
+<p>A partir de estos resultados se observa:</p>
+<ul>
+<li><p><strong>Precio (price):</strong></p>
+<ul>
+<li><p>Media aproximada: 6.08</p></li>
+<li><p>Mediana: 3.99</p></li>
+<li><p>Primer cuartil: 1.69</p></li>
+<li><p>Tercer cuartil: 7.19</p></li>
+<li><p>Mínimo: 0</p></li>
+<li><p>Máximo: 421.99</p></li>
+</ul></li>
+</ul>
+<p>La distribución es fuertemente asimétrica hacia la derecha. Una proporción relevante de juegos es gratuita:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>prop_gratis <span class="ot">&lt;-</span> <span class="fu">mean</span>(steam<span class="sc">$</span>price <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>prop_gratis</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.09455217</code></pre>
+</div>
+</div>
+<p>Esto supone aproximadamente un 9.46% de juegos con precio cero.</p>
+<ul>
+<li><p><strong>Valoraciones (positive_ratings, negative_ratings):</strong></p>
+<p>Los recuentos de valoraciones positivas y negativas presentan valores muy extremos: algunos juegos superan los 2,6 millones de valoraciones positivas y casi 500 000 negativas. La mayoría de los juegos, sin embargo, se sitúa en rangos de pocos decenas de valoraciones.</p></li>
+<li><p><strong>Tiempos de juego (average_playtime, median_playtime):</strong></p>
+<p>Una proporción muy elevada de juegos presenta tiempos de juego medio y mediano iguales a 0:</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>prop_avg_zero <span class="ot">&lt;-</span> <span class="fu">mean</span>(steam<span class="sc">$</span>average_playtime <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>prop_med_zero <span class="ot">&lt;-</span> <span class="fu">mean</span>(steam<span class="sc">$</span>median_playtime <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>prop_avg_zero</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.7721145</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>prop_med_zero</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.7721145</code></pre>
+</div>
+</div>
+<p>Ambas proporciones son aproximadamente 77.21%, lo que indica que para la mayoría de títulos no se dispone de información significativa de tiempo de juego o bien que el uso registrado es muy reducido.</p>
+<ul>
+<li><p><strong>Logros (achievements):</strong></p>
+<p>La mediana de logros es relativamente baja (alrededor de 7), pero el máximo se aproxima a los 10 000 logros, lo que muestra una distribución muy dispersa.</p></li>
+<li><p><strong>Edad requerida (required_age):</strong></p>
+<p>La práctica totalidad de los juegos tiene required_age = 0, con una minoría restringida a 18 años u otras edades:</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(steam<span class="sc">$</span>required_age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    0     3     7    12    16    18 
+26479    11    12    73   192   308 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(steam<span class="sc">$</span>required_age <span class="sc">==</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9779871</code></pre>
+</div>
+</div>
+<p>La proporción de juegos sin restricción de edad explícita (required_age = 0) es de aproximadamente 97.8%.</p>
+<p>Como ejemplo, se representa la distribución del precio, truncando a precios menores de 100 unidades para mejorar la legibilidad.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>steam <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(price <span class="sc">&lt;</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price)) <span class="sc">+</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">bins =</span> <span class="dv">40</span>,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"white"</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Distribución del precio (truncado a precios &lt; 100)"</span>,</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="st">"Precio"</span>,</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="st">"Frecuencia"</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Se observa una fuerte concentración de juegos en los rangos de precio bajos, con una cola larga hacia valores altos.</p>
+</section>
+<section id="variables-categóricas" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="variables-categóricas"><span class="header-section-number">3.2</span> Variables categóricas</h2>
+<p>Se analizan algunas variables categóricas clave: english, owners y platforms.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(steam<span class="sc">$</span>english)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    0     1 
+  511 26564 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>(steam<span class="sc">$</span>english))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+        0         1 
+0.0188735 0.9811265 </code></pre>
+</div>
+</div>
+<p>El indicador english está fuertemente desbalanceado: aproximadamente un 98.11% de los juegos están disponibles en inglés.</p>
+<p>Para owners, se estudia la distribución de los intervalos de propietarios:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>owners_counts <span class="ot">&lt;-</span> <span class="fu">sort</span>(<span class="fu">table</span>(steam<span class="sc">$</span>owners))</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>owners_counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+100000000-200000000  50000000-100000000   20000000-50000000   10000000-20000000 
+                  1                   2                   3                  21 
+   5000000-10000000     2000000-5000000     1000000-2000000      500000-1000000 
+                 46                 193                 288                 513 
+      200000-500000       100000-200000        50000-100000         20000-50000 
+               1272                1386                1695                3059 
+            0-20000 
+              18596 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(owners_counts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+100000000-200000000  50000000-100000000   20000000-50000000   10000000-20000000 
+       3.693444e-05        7.386888e-05        1.108033e-04        7.756233e-04 
+   5000000-10000000     2000000-5000000     1000000-2000000      500000-1000000 
+       1.698984e-03        7.128347e-03        1.063712e-02        1.894737e-02 
+      200000-500000       100000-200000        50000-100000         20000-50000 
+       4.698061e-02        5.119114e-02        6.260388e-02        1.129825e-01 
+            0-20000 
+       6.868329e-01 </code></pre>
+</div>
+</div>
+<p>El intervalo 0-20000 concentra la mayoría de los juegos.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>owners_counts[<span class="st">"0-20000"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0-20000 
+  18596 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>owners_counts[<span class="st">"0-20000"</span>] <span class="sc">/</span> <span class="fu">nrow</span>(steam)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  0-20000 
+0.6868329 </code></pre>
+</div>
+</div>
+<p>Aproximadamente un 68.68% de los títulos se sitúa en este intervalo, lo que indica que la mayor parte del catálogo tiene un número relativamente bajo de propietarios.</p>
+<p>En cuanto a platforms, se analizan las combinaciones más frecuentes:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">sort</span>(<span class="fu">table</span>(steam<span class="sc">$</span>platforms), <span class="at">decreasing =</span> <span class="cn">TRUE</span>), <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+          windows windows;mac;linux       windows;mac     windows;linux 
+            18398              4623              3439               610 
+              mac             linux         mac;linux 
+                3                 1                 1 </code></pre>
+</div>
+</div>
+<p>La combinación solo windows es claramente dominante, seguida de windows;mac;linux y windows;mac. Esto refleja el peso de Windows como plataforma principal de distribución.</p>
+<p>Finalmente, se observa el número de juegos por año de lanzamiento:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>steam <span class="sc">%&gt;%</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(release_year) <span class="sc">%&gt;%</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(release_year) <span class="sc">%&gt;%</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="at">n =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 23 × 2
+   release_year     n
+          &lt;dbl&gt; &lt;int&gt;
+ 1         1997     1
+ 2         1998     1
+ 3         1999     2
+ 4         2000     2
+ 5         2001     4
+ 6         2002     1
+ 7         2003     3
+ 8         2004     6
+ 9         2005     6
+10         2006    48
+11         2007    93
+12         2008   145
+13         2009   305
+14         2010   238
+15         2011   239
+16         2012   320
+17         2013   418
+18         2014  1555
+19         2015  2597
+20         2016  4361
+21         2017  6357
+22         2018  8160
+23         2019  2213</code></pre>
+</div>
+</div>
+<p>y se representa gráficamente.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>steam <span class="sc">%&gt;%</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(release_year) <span class="sc">%&gt;%</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> release_year, <span class="at">y =</span> n)) <span class="sc">+</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">bins =</span> <span class="dv">40</span>,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> <span class="st">"white"</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Número de juegos lanzados por año"</span>,</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Año de lanzamiento"</span>,</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Número de juegos"</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Los años de lanzamiento oscilan entre 1997 y 2019. A partir de aproximadamente 2014 el número de títulos crece de forma muy acusada, con picos en los años 2016, 2017 y 2018.</p>
+</section>
+</section>
+<section id="análisis-bi-y-multivariado" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Análisis bi y multivariado</h1>
+<section id="relación-entre-precio-y-valoraciones" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="relación-entre-precio-y-valoraciones"><span class="header-section-number">4.1</span> Relación entre precio y valoraciones</h2>
+<p>Se explora la relación entre el precio y el número de valoraciones positivas. Dado que existen valores extremos, se filtran precios muy altos y se aplica escala logarítmica a las valoraciones.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>steam <span class="sc">%&gt;%</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(price <span class="sc">&lt;</span> <span class="dv">100</span>, positive_ratings <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price, <span class="at">y =</span> positive_ratings)) <span class="sc">+</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.1</span>,</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="fl">0.8</span>,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">colour =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">height =</span> <span class="fl">0.1</span>)</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Relación entre precio y valoraciones positivas"</span>,</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Precio"</span>,</span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Valoraciones positivas (escala log10)"</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Para cuantificar la relación lineal se calcula la matriz de correlaciones entre variables numéricas seleccionadas:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>cor_matrix <span class="ot">&lt;-</span> steam <span class="sc">%&gt;%</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(price, positive_ratings, negative_ratings,</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  average_playtime, median_playtime,</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  achievements) <span class="sc">%&gt;%</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cor</span>(<span class="at">use =</span> <span class="st">"pairwise.complete.obs"</span>)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>cor_matrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                        price positive_ratings negative_ratings
+price             1.000000000       0.03610958      0.051258722
+positive_ratings  0.036109578       1.00000000      0.762804271
+negative_ratings  0.051258722       0.76280427      1.000000000
+average_playtime  0.049242348       0.15789760      0.161139866
+median_playtime   0.036610178       0.03577591      0.047887136
+achievements     -0.007996073       0.00605843      0.003577711
+                 average_playtime median_playtime achievements
+price                  0.04924235     0.036610178 -0.007996073
+positive_ratings       0.15789760     0.035775914  0.006058430
+negative_ratings       0.16113987     0.047887136  0.003577711
+average_playtime       1.00000000     0.914900236  0.014174916
+median_playtime        0.91490024     1.000000000  0.009957122
+achievements           0.01417492     0.009957122  1.000000000</code></pre>
+</div>
+</div>
+<p>La correlación entre price y positive_ratings es baja (en torno a 0.04). Sin embargo, las valoraciones positivas y negativas están muy correlacionadas entre sí (correlación alrededor de 0.76), lo que indica que los juegos más populares acumulan simultáneamente muchas opiniones de ambos signos.</p>
+<p>La correlación entre average_playtime y median_playtime es alta (en torno a 0.91), lo que refleja que ambas medidas recogen un patrón similar de uso.</p>
+</section>
+<section id="tiempo-de-juego-y-valoraciones-positivas" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="tiempo-de-juego-y-valoraciones-positivas"><span class="header-section-number">4.2</span> Tiempo de juego y valoraciones positivas</h2>
+<p>Se estudia la relación entre el tiempo medio de juego y el número de valoraciones positivas, utilizando transformaciones logarítmicas dada la fuerte asimetría de ambas variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>steam <span class="sc">%&gt;%</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(average_playtime <span class="sc">&gt;</span> <span class="dv">0</span>, positive_ratings <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> average_playtime, <span class="at">y =</span> positive_ratings)) <span class="sc">+</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.5</span>,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">size =</span> <span class="fl">0.8</span>,</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">colour =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">position =</span> <span class="fu">position_jitter</span>(<span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">height =</span> <span class="fl">0.1</span>)</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">+</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_log10</span>() <span class="sc">+</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Tiempo medio de juego vs valoraciones positivas"</span>,</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Tiempo medio de juego (min, log10)"</span>,</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Valoraciones positivas (log10)"</span></span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Se observa que existe cierta tendencia a que juegos con mayores tiempos de juego acumulen más valoraciones, pero la dispersión es elevada, lo que sugiere que intervienen otros factores (género, calidad percibida, marketing, etc.).</p>
+</section>
+<section id="precio-por-intervalo-de-propietarios" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="precio-por-intervalo-de-propietarios"><span class="header-section-number">4.3</span> Precio por intervalo de propietarios</h2>
+<p>Aunque owners representa intervalos de recuento y no valores exactos, se puede utilizar como factor ordenado para estudiar la distribución de precios según el rango de popularidad aproximado.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>steam <span class="sc">%&gt;%</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(price <span class="sc">&lt;</span> <span class="dv">100</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> owners, <span class="at">y =</span> price)) <span class="sc">+</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>(</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill =</span> <span class="st">"steelblue"</span>,     </span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">alpha =</span> <span class="fl">0.6</span>,            </span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">outlier.colour =</span> <span class="st">"black"</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribución del precio por intervalo de propietarios"</span>,</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Intervalo de propietarios"</span>,</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Precio"</span></span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="EDA_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Este gráfico permite valorar si existen diferencias sistemáticas de precio entre juegos muy poco populares (por ejemplo, 0-20000 propietarios) y juegos con grandes bases de usuarios.</p>
+</section>
+</section>
+<section id="problemas-encontrados-en-los-datos" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Problemas encontrados en los datos</h1>
+<p>A partir del análisis realizado pueden identificarse varios problemas y limitaciones relevantes:</p>
+<p><strong>1. Variables multietiqueta codificadas en texto</strong></p>
+<p>Las variables platforms, categories, genres y steamspy_tags contienen listas de etiquetas separadas por punto y coma. Esta codificación dificulta el análisis detallado a nivel de etiqueta individual y exige transformaciones adicionales.</p>
+<p><strong>2. Propietarios (owners) como intervalo categórico</strong></p>
+<p>La variable owners recoge el número de propietarios mediante intervalos (por ejemplo, 0-20000, 20000-50000) y no como recuento exacto. Esto limita el uso de técnicas que requieran datos numéricos precisos y obliga a tratar owners como variable ordinal.</p>
+<p><strong>3. Alta proporción de tiempos de juego nulos</strong></p>
+<p>Aproximadamente un 77.21% de los juegos presenta average_playtime y median_playtime igual a 0. Esta mezcla de posibles “falta de uso” y “falta de información” complica la interpretación de los tiempos de juego y puede sesgar análisis que utilicen estas variables.</p>
+<p><strong>4. Desbalanceo severo en el indicador de idioma</strong></p>
+<p>Alrededor de un 98.11% de los juegos están disponibles en inglés. Esta falta de equilibrio reduce la utilidad analítica de la variable english en muchos contextos, ya que proporciona poca variabilidad.</p>
+<p><strong>5. Presencia de valores atípicos extremos</strong></p>
+<p>Existen juegos con precios muy elevados (hasta 421.99 unidades monetarias) y con números de valoraciones extremadamente altos (más de 2,6 millones de valoraciones positivas y cerca de 500 000 negativas). Estos outliers pueden influir de forma desproporcionada en estadísticos y modelos si no se tratan con técnicas robustas o transformaciones adecuadas.</p>
+<p><strong>6. Ausencia de información a nivel de usuario</strong></p>
+<p>Los datos están agregados a nivel de juego, sin identificadores de usuario ni características individuales. Esto impide estudiar comportamiento y preferencias a nivel de jugador y limita el análisis a patrones globales del catálogo.</p>
+</section>
+<section id="qué-nos-dicen-los-datos" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> ¿Qué nos dicen los datos?</h1>
+<p>Integrando los resultados del análisis exploratorio, se pueden resumir las principales conclusiones en varios puntos:</p>
+<ul>
+<li><p><strong>Crecimiento temporal del catálogo</strong></p>
+<p>El número de lanzamientos por año aumenta de forma muy notable a partir de los años recientes. Entre 1997 y 2019 se observa un cambio claro, con incrementos especialmente pronunciados a partir de 2014, y picos de varios miles de juegos al año en 2016, 2017 y 2018. Esto es coherente con un proceso de expansión rápida del catálogo, probablemente asociado a la entrada de numerosos desarrolladores independientes.</p></li>
+<li><p><strong>Estructura de precios muy asimétrica</strong></p>
+<p>El precio medio se sitúa en torno a 6.08 unidades monetarias, con una mediana de 3.99 y un máximo de 421.99. La mayoría de los juegos se concentra en rangos de precio bajos, mientras que los precios muy elevados son poco frecuentes y constituyen valores atípicos. Aproximadamente un 9.46 por ciento de los títulos son gratuitos, lo que evidencia la importancia del modelo free-to-play y de estrategias de bajo precio.</p></li>
+<li><p><strong>Distribución muy desigual de la popularidad</strong></p>
+<p>El intervalo de propietarios 0-20000 engloba alrededor de un 68.68% del catálogo. Solo una minoría de juegos alcanza los intervalos de propietarios más altos. Lo mismo ocurre con las valoraciones: algunos títulos acumulan millones de valoraciones, mientras que la mayoría apenas reúne unas pocas decenas. Esto sugiere un mercado muy concentrado, en el que pocos juegos captan gran parte de la atención.</p></li>
+<li><p><strong>Relación débil entre precio y número de valoraciones</strong></p>
+<p>La correlación casi nula entre price y positive_ratings indica que, de forma lineal, el precio no explica bien la popularidad medida por número de valoraciones. Existen juegos muy valorados en prácticamente todos los rangos de precios, lo que refuerza la idea de que otros factores (calidad percibida, género, marketing, reputación del estudio, etc.) tienen un papel determinante.</p></li>
+<li><p><strong>Tiempos de juego concentrados en unos pocos títulos</strong></p>
+<p>Aunque existe una asociación positiva entre tiempo de juego medio y número de valoraciones, la dispersión es elevada y la gran mayoría de juegos presenta tiempos de juego nulos o muy bajos. Esto vuelve a señalar la existencia de un conjunto relativamente pequeño de títulos capaces de retener a los jugadores durante muchas horas, frente a un catálogo amplio con uso muy limitado.</p></li>
+<li><p><strong>Dominio del idioma inglés y de la plataforma Windows</strong></p>
+<p>El hecho de que más del 98.11% de los juegos esté disponible en inglés y que la configuración de plataformas más frecuente sea solo windows muestra un claro sesgo hacia esta combinación idioma-plataforma. Aunque existen juegos multiplataforma y con otros idiomas, su presencia relativa es menor.</p></li>
+</ul>
+<p>En conjunto, los datos describen un catálogo en expansión, con un volumen creciente de lanzamientos y una distribución altamente desigual de atención y uso. La estructura de precios, tiempos de juego y valoraciones sugiere un entorno muy competitivo, en el que solo una fracción reducida de títulos alcanza una popularidad masiva.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
