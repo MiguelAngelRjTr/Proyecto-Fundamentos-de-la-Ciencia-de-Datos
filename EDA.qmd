@@ -116,10 +116,10 @@ Antes de profundizar en el análisis exploratorio, se realizan algunas transform
 - Tratar owners como factor ordenado.
 ```{r}
 steam <- steam %>%
-mutate(
-release_year = year(release_date),
-owners = factor(owners, levels = sort(unique(owners)), ordered = TRUE)
-)
+  mutate(
+  release_year = year(release_date),
+  owners = factor(owners, levels = sort(unique(owners)), ordered = TRUE)
+  )
 
 summary(select(steam, release_date, release_year, owners))
 
@@ -134,9 +134,9 @@ En este apartado se analizan variables numéricas y categóricas de manera aisla
 Se seleccionan las variables numéricas principales: precio, valoraciones, tiempos de juego, logros y edad requerida.
 ```{r}
 num_vars <- steam %>%
-select(price, positive_ratings, negative_ratings,
-average_playtime, median_playtime,
-achievements, required_age)
+  select(price, positive_ratings, negative_ratings,
+  average_playtime, median_playtime,
+  achievements, required_age)
 
 summary(num_vars)
 
