@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Comprensión de los Datos</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./04-eda.html" rel="next">
+<link href="./02-introduccion.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-70a47bd5681a7291082a5b9f83d58762.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-comprension-datos.html">Datos</a></li><li class="breadcrumb-item"><a href="./03-comprension-datos.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Comprensión de los Datos</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+      <a href="./index.html" class="sidebar-logo-link">
+      </a>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Portada</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-introduccion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Datos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-comprension-datos.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Comprensión de los Datos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Análisis Exploratorio de Datos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Modelos</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-preparacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Preparación de los Datos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-regresion-lineal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Modelo de Regresión Lineal Múltiple</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-regresion-logistica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Modelo de Regresión Logística</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./referencias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Referencias</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#evaluación-inicial-de-dataset" id="toc-evaluación-inicial-de-dataset" class="nav-link active" data-scroll-target="#evaluación-inicial-de-dataset"><span class="header-section-number">3.1</span> Evaluación inicial de Dataset</a></li>
+  <li><a href="#resumen-de-las-variables" id="toc-resumen-de-las-variables" class="nav-link" data-scroll-target="#resumen-de-las-variables"><span class="header-section-number">3.2</span> Resumen de las variables</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-comprension-datos.html">Datos</a></li><li class="breadcrumb-item"><a href="./03-comprension-datos.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Comprensión de los Datos</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Comprensión de los Datos</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>steam <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/steam.csv"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="evaluación-inicial-de-dataset" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="evaluación-inicial-de-dataset"><span class="header-section-number">3.1</span> Evaluación inicial de Dataset</h2>
+<p>A continuación, se realiza una evaluación inicial del dataset cargado desde el archivo CSV. Esta evaluación incluye información básica como número de filas y columnas, nombres de las columnas y su estructura general.</p>
+<p><strong>Visualización Inicial del Dataset</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Mostrar las primeras filas del dataset</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(steam)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 18
+  appid name     release_date english developer publisher platforms required_age
+  &lt;dbl&gt; &lt;chr&gt;    &lt;date&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;            &lt;dbl&gt;
+1    10 Counter… 2000-11-01         1 Valve     Valve     windows;…            0
+2    20 Team Fo… 1999-04-01         1 Valve     Valve     windows;…            0
+3    30 Day of … 2003-05-01         1 Valve     Valve     windows;…            0
+4    40 Deathma… 2001-06-01         1 Valve     Valve     windows;…            0
+5    50 Half-Li… 1999-11-01         1 Gearbox … Valve     windows;…            0
+6    60 Ricochet 2000-11-01         1 Valve     Valve     windows;…            0
+# ℹ 10 more variables: categories &lt;chr&gt;, genres &lt;chr&gt;, steamspy_tags &lt;chr&gt;,
+#   achievements &lt;dbl&gt;, positive_ratings &lt;dbl&gt;, negative_ratings &lt;dbl&gt;,
+#   average_playtime &lt;dbl&gt;, median_playtime &lt;dbl&gt;, owners &lt;chr&gt;, price &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p><strong>Dimensiones del dataset</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>n_filas <span class="ot">&lt;-</span> <span class="fu">nrow</span>(steam)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>n_columnas <span class="ot">&lt;-</span> <span class="fu">ncol</span>(steam)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>El conjunto de datos contiene 27075 observaciones (videojuegos) y 18 variables. A continuación se muestra un resumen numérico global y el porcentaje de valores ausentes por columna.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>num_df <span class="ot">&lt;-</span> steam[, <span class="fu">sapply</span>(steam, is.numeric), drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>prop_na <span class="ot">=</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> <span class="fu">colMeans</span>(<span class="fu">is.na</span>(steam)), <span class="dv">2</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(num_df)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     appid            english        required_age      achievements    
+ Min.   :     10   Min.   :0.0000   Min.   : 0.0000   Min.   :   0.00  
+ 1st Qu.: 401230   1st Qu.:1.0000   1st Qu.: 0.0000   1st Qu.:   0.00  
+ Median : 599070   Median :1.0000   Median : 0.0000   Median :   7.00  
+ Mean   : 596204   Mean   :0.9811   Mean   : 0.3549   Mean   :  45.25  
+ 3rd Qu.: 798760   3rd Qu.:1.0000   3rd Qu.: 0.0000   3rd Qu.:  23.00  
+ Max.   :1069460   Max.   :1.0000   Max.   :18.0000   Max.   :9821.00  
+ positive_ratings  negative_ratings average_playtime   median_playtime   
+ Min.   :      0   Min.   :     0   Min.   :     0.0   Min.   :     0.0  
+ 1st Qu.:      6   1st Qu.:     2   1st Qu.:     0.0   1st Qu.:     0.0  
+ Median :     24   Median :     9   Median :     0.0   Median :     0.0  
+ Mean   :   1001   Mean   :   211   Mean   :   149.8   Mean   :   146.1  
+ 3rd Qu.:    126   3rd Qu.:    42   3rd Qu.:     0.0   3rd Qu.:     0.0  
+ Max.   :2644404   Max.   :487076   Max.   :190625.0   Max.   :190625.0  
+     price        
+ Min.   :  0.000  
+ 1st Qu.:  1.690  
+ Median :  3.990  
+ Mean   :  6.078  
+ 3rd Qu.:  7.190  
+ Max.   :421.990  </code></pre>
+</div>
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>prop_na</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           appid             name     release_date          english 
+            0.00             0.00             0.00             0.00 
+       developer        publisher        platforms     required_age 
+            0.00             0.02             0.00             0.00 
+      categories           genres    steamspy_tags     achievements 
+            0.00             0.00             0.00             0.00 
+positive_ratings negative_ratings average_playtime  median_playtime 
+            0.00             0.00             0.00             0.00 
+          owners            price 
+            0.00             0.00 </code></pre>
+</div>
+</div>
+<p>El resumen numérico confirma que varias variables presentan distribuciones fuertemente asimétricas, especialmente aquellas relacionadas con la popularidad del juego (<code>positive_ratings</code>, <code>negative_ratings</code>) y con el tiempo de uso (<code>average_playtime</code>, <code>median_playtime</code>). En estos casos, la diferencia entre la mediana y el máximo indica la presencia de colas largas: la mayoría de títulos acumulan pocas valoraciones, mientras que un subconjunto reducido concentra valores extremadamente altos.</p>
+<p>Asimismo, se observa una proporción relevante de ceros en variables como <code>required_age</code> y tiempos de juego, lo que es coherente con títulos sin restricción de edad o con baja actividad registrada.</p>
+<p>En cuanto a calidad de datos, el porcentaje de valores ausentes es prácticamente nulo en la mayoría de columnas, con únicamente una fracción marginal en <code>publisher</code>. Esto sugiere que el dataset es adecuado para análisis predictivo sin necesidad de imputaciones complejas.</p>
+<p>Dado este comportamiento, resulta justificada la transformación logarítmica aplicada posteriormente al target, con el objetivo de estabilizar la varianza y reducir el efecto de valores extremos en el modelado.</p>
+<p><strong>Nombres de las Columnas</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Listar nombres de las columnas</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(steam)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "appid"            "name"             "release_date"     "english"         
+ [5] "developer"        "publisher"        "platforms"        "required_age"    
+ [9] "categories"       "genres"           "steamspy_tags"    "achievements"    
+[13] "positive_ratings" "negative_ratings" "average_playtime" "median_playtime" 
+[17] "owners"           "price"           </code></pre>
+</div>
+</div>
+<p>Los nombres de las columnas son descriptivos, lo que facilita identificar las variables y su propósito dentro del análisis.</p>
+<p><strong>Estructura de las Variables</strong></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ver estructura del dataset</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(steam)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [27,075 × 18] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ appid           : num [1:27075] 10 20 30 40 50 60 70 80 130 220 ...
+ $ name            : chr [1:27075] "Counter-Strike" "Team Fortress Classic" "Day of Defeat" "Deathmatch Classic" ...
+ $ release_date    : Date[1:27075], format: "2000-11-01" "1999-04-01" ...
+ $ english         : num [1:27075] 1 1 1 1 1 1 1 1 1 1 ...
+ $ developer       : chr [1:27075] "Valve" "Valve" "Valve" "Valve" ...
+ $ publisher       : chr [1:27075] "Valve" "Valve" "Valve" "Valve" ...
+ $ platforms       : chr [1:27075] "windows;mac;linux" "windows;mac;linux" "windows;mac;linux" "windows;mac;linux" ...
+ $ required_age    : num [1:27075] 0 0 0 0 0 0 0 0 0 0 ...
+ $ categories      : chr [1:27075] "Multi-player;Online Multi-Player;Local Multi-Player;Valve Anti-Cheat enabled" "Multi-player;Online Multi-Player;Local Multi-Player;Valve Anti-Cheat enabled" "Multi-player;Valve Anti-Cheat enabled" "Multi-player;Online Multi-Player;Local Multi-Player;Valve Anti-Cheat enabled" ...
+ $ genres          : chr [1:27075] "Action" "Action" "Action" "Action" ...
+ $ steamspy_tags   : chr [1:27075] "Action;FPS;Multiplayer" "Action;FPS;Multiplayer" "FPS;World War II;Multiplayer" "Action;FPS;Multiplayer" ...
+ $ achievements    : num [1:27075] 0 0 0 0 0 0 0 0 0 33 ...
+ $ positive_ratings: num [1:27075] 124534 3318 3416 1273 5250 ...
+ $ negative_ratings: num [1:27075] 3339 633 398 267 288 ...
+ $ average_playtime: num [1:27075] 17612 277 187 258 624 ...
+ $ median_playtime : num [1:27075] 317 62 34 184 415 10 83 43 205 402 ...
+ $ owners          : chr [1:27075] "10000000-20000000" "5000000-10000000" "5000000-10000000" "5000000-10000000" ...
+ $ price           : num [1:27075] 7.19 3.99 3.99 3.99 3.99 3.99 7.19 7.19 3.99 7.19 ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   appid = col_double(),
+  ..   name = col_character(),
+  ..   release_date = col_date(format = ""),
+  ..   english = col_double(),
+  ..   developer = col_character(),
+  ..   publisher = col_character(),
+  ..   platforms = col_character(),
+  ..   required_age = col_double(),
+  ..   categories = col_character(),
+  ..   genres = col_character(),
+  ..   steamspy_tags = col_character(),
+  ..   achievements = col_double(),
+  ..   positive_ratings = col_double(),
+  ..   negative_ratings = col_double(),
+  ..   average_playtime = col_double(),
+  ..   median_playtime = col_double(),
+  ..   owners = col_character(),
+  ..   price = col_double()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+</div>
+<p>Se identificaron variables categóricas y numéricas.</p>
+</section>
+<section id="resumen-de-las-variables" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="resumen-de-las-variables"><span class="header-section-number">3.2</span> Resumen de las variables</h2>
+<p>De las 18 variables totales, varias se han importado como tipo numérico (double), es decir, han quedado almacenadas como variables numéricas discretas en muchos casos (por ejemplo, recuentos como positive_ratings, negative_ratings o achievements). Sin embargo, en algunos casos su naturaleza original es de variable numérica continua, como el precio (price) o, según la interpretación, medidas cuantitativas como los tiempos de juego en minutos (average_playtime y median_playtime). Además, el conjunto de datos incluye múltiples variables categóricas (character), entre ellas developer, publisher y varias variables multietiqueta (platforms, categories, genres, steamspy_tags) codificadas como listas de etiquetas separadas por punto y coma. Finalmente, la variable owners no se recoge como un número exacto, sino como un intervalo de propietarios estimados, por lo que debe tratarse como variable ordinal más que como magnitud numérica precisa.</p>
+<p>A continuación, se presenta un resumen detallado de cada variable y una breve descripción:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Mostrar código</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Diccionario de variables Steam)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>dict <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>variable,           <span class="sc">~</span>tipo,                    <span class="sc">~</span>descripcion,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"appi"</span>,             <span class="st">"Numérica discreta"</span>,      <span class="st">"Identificador único del juego."</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"name"</span>,              <span class="st">"Categórica nominal"</span>,     <span class="st">"Nombre comercial del juego."</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"release_date"</span>,      <span class="st">"Fecha"</span>,                  <span class="st">"Fecha de lanzamiento en Steam (cuando está disponible)."</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"english"</span>,           <span class="st">"Binaria (0/1)"</span>,          <span class="st">"Indicador de disponibilidad en inglés."</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"developer"</span>,         <span class="st">"Categórica nominal"</span>,     <span class="st">"Estudio o desarrollador principal."</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"publisher"</span>,         <span class="st">"Categórica nominal"</span>,     <span class="st">"Editor o distribuidor."</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"platforms"</span>,         <span class="st">"Categórica nominal"</span>,     <span class="st">"Plataformas soportadas (p.ej., windows;mac;linux) codificadas como texto."</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"required_age"</span>,      <span class="st">"Numérica discreta"</span>,      <span class="st">"Edad mínima requerida o recomendada."</span>,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"categories"</span>,        <span class="st">"Categórica nominal"</span>,     <span class="st">"Categorías del juego (lista separada por ';')."</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"genres"</span>,            <span class="st">"Categórica nominal"</span>,     <span class="st">"Géneros del juego (lista separada por ';')."</span>,</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"steamspy_tags"</span>,     <span class="st">"Categórica nominal"</span>,     <span class="st">"Etiquetas agregadas (SteamSpy), codificadas como texto."</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"achievements"</span>,      <span class="st">"Numérica discreta"</span>,      <span class="st">"Número de logros disponibles."</span>,</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"positive_ratings"</span>,  <span class="st">"Numérica discreta"</span>,      <span class="st">"Recuento de valoraciones positivas agregadas."</span>,</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"negative_ratings"</span>,  <span class="st">"Numérica discreta"</span>,      <span class="st">"Recuento de valoraciones negativas agregadas."</span>,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"average_playtime"</span>,  <span class="st">"Numérica discreta"</span>,      <span class="st">"Tiempo medio de juego por usuario (minutos)."</span>,</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"median_playtime"</span>,   <span class="st">"Numérica discreta"</span>,      <span class="st">"Tiempo mediano de juego por usuario (minutos)."</span>,</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"owners"</span>,            <span class="st">"Categórica ordinal"</span>,     <span class="st">"Intervalo estimado de propietarios (p.ej., 0-20000, 20000-50000)."</span>,</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"price"</span>,             <span class="st">"Numérica continua"</span>,      <span class="st">"Precio del juego."</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>dict <span class="sc">%&gt;%</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Nombre de la Variable</span><span class="st">`</span> <span class="ot">=</span> variable,</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Tipo</span><span class="st">`</span> <span class="ot">=</span> tipo,</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Descripción</span><span class="st">`</span> <span class="ot">=</span> descripcion</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">format =</span> <span class="st">"html"</span>, <span class="at">escape =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">TRUE</span>, <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span>, <span class="at">width =</span> <span class="st">"20em"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">2</span>, <span class="at">width =</span> <span class="st">"14em"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">3</span>, <span class="at">width =</span> <span class="st">"40em"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-striped caption-top table-sm small">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Nombre de la Variable</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Tipo</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 20em;">appi</td>
+<td style="text-align: left; width: 14em;">Numérica discreta</td>
+<td style="text-align: left; width: 40em;">Identificador único del juego.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20em;">name</td>
+<td style="text-align: left; width: 14em;">Categórica nominal</td>
+<td style="text-align: left; width: 40em;">Nombre comercial del juego.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20em;">release_date</td>
+<td style="text-align: left; width: 14em;">Fecha</td>
+<td style="text-align: left; width: 40em;">Fecha de lanzamiento en Steam (cuando está disponible).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20em;">english</td>
+<td style="text-align: left; width: 14em;">Binaria (0/1)</td>
+<td style="text-align: left; width: 40em;">Indicador de disponibilidad en inglés.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20em;">developer</td>
+<td style="text-align: left; width: 14em;">Categórica nominal</td>
+<td style="text-align: left; width: 40em;">Estudio o desarrollador principal.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20em;">publisher</td>
+<td style="text-align: left; width: 14em;">Categórica nominal</td>
+<td style="text-align: left; width: 40em;">Editor o distribuidor.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20em;">platforms</td>
+<td style="text-align: left; width: 14em;">Categórica nominal</td>
+<td style="text-align: left; width: 40em;">Plataformas soportadas (p.ej., windows;mac;linux) codificadas como texto.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20em;">required_age</td>
+<td style="text-align: left; width: 14em;">Numérica discreta</td>
+<td style="text-align: left; width: 40em;">Edad mínima requerida o recomendada.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20em;">categories</td>
+<td style="text-align: left; width: 14em;">Categórica nominal</td>
+<td style="text-align: left; width: 40em;">Categorías del juego (lista separada por ';').</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20em;">genres</td>
+<td style="text-align: left; width: 14em;">Categórica nominal</td>
+<td style="text-align: left; width: 40em;">Géneros del juego (lista separada por ';').</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20em;">steamspy_tags</td>
+<td style="text-align: left; width: 14em;">Categórica nominal</td>
+<td style="text-align: left; width: 40em;">Etiquetas agregadas (SteamSpy), codificadas como texto.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20em;">achievements</td>
+<td style="text-align: left; width: 14em;">Numérica discreta</td>
+<td style="text-align: left; width: 40em;">Número de logros disponibles.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20em;">positive_ratings</td>
+<td style="text-align: left; width: 14em;">Numérica discreta</td>
+<td style="text-align: left; width: 40em;">Recuento de valoraciones positivas agregadas.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20em;">negative_ratings</td>
+<td style="text-align: left; width: 14em;">Numérica discreta</td>
+<td style="text-align: left; width: 40em;">Recuento de valoraciones negativas agregadas.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20em;">average_playtime</td>
+<td style="text-align: left; width: 14em;">Numérica discreta</td>
+<td style="text-align: left; width: 40em;">Tiempo medio de juego por usuario (minutos).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20em;">median_playtime</td>
+<td style="text-align: left; width: 14em;">Numérica discreta</td>
+<td style="text-align: left; width: 40em;">Tiempo mediano de juego por usuario (minutos).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 20em;">owners</td>
+<td style="text-align: left; width: 14em;">Categórica ordinal</td>
+<td style="text-align: left; width: 40em;">Intervalo estimado de propietarios (p.ej., 0-20000, 20000-50000).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 20em;">price</td>
+<td style="text-align: left; width: 14em;">Numérica continua</td>
+<td style="text-align: left; width: 40em;">Precio del juego.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./02-introduccion.html" class="pagination-link" aria-label="Introducción">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introducción</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./04-eda.html" class="pagination-link" aria-label="Análisis Exploratorio de Datos">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Análisis Exploratorio de Datos</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

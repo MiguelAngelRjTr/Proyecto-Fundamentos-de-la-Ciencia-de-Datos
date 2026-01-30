@@ -1,0 +1,399 @@
+---
+title: "Análisis Exploratorio de Datos"
+---
+
+```{r}
+#| label: eda-setup
+#| include: false
+
+library(readr)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(stringr)
+library(tidyr)
+library(forcats)
+
+steam <- read_csv("data/steam.csv", show_col_types = FALSE)
+
+# Helper: contar elementos en listas codificadas como "a;b;c"
+count_semicolon <- function(x) {
+  x <- as.character(x)
+  ifelse(is.na(x) | x == "", 0L, lengths(strsplit(x, ";", fixed = TRUE)))
+}
+
+# Paleta para el capítulo
+pal_eda <- c("#1f77b4", "#ff7f0e", "#2ca02c", "#d62728",
+             "#9467bd", "#8c564b", "#e377c2", "#17becf")
+
+theme_set(
+  theme_minimal(base_size = 12) +
+    theme(
+      plot.title = element_text(face = "bold"),
+      panel.grid.minor = element_blank(),
+      legend.position = "top"
+    )
+)
+
+scale_colour_discrete <- function(...) scale_colour_manual(values = pal_eda)
+scale_fill_discrete   <- function(...) scale_fill_manual(values = pal_eda)
+
+```
+
+## Preparación mínima para EDA
+
+En este capítulo se aplica una **preparación mínima** orientada a visualización y descripción (no al modelado):
+
+- Normalizar `release_date` como fecha y derivar `release_year`.
+- Tratar `owners` como variable **ordinal** (intervalos).
+- Construir transformaciones `log1p()` solo para variables con colas largas (`price`, `positive_ratings`).
+- Resumir columnas multietiqueta (separadas por `;`) mediante contadores simples.
+
+```{r}
+#| label: eda-prep
+#| include: false
+
+# niveles ordenados para 'owners' por el límite inferior del intervalo
+owners_levels <- steam %>%
+  distinct(owners) %>%
+  mutate(lo = suppressWarnings(as.numeric(sub("-.*", "", owners)))) %>%
+  arrange(lo) %>%
+  pull(owners)
+
+steam <- steam %>%
+  mutate(
+    # fecha / año
+    release_date = as.Date(release_date),
+    release_year = year(release_date),
+
+    # ordinalidad (intervalos)
+    owners = factor(owners, levels = owners_levels, ordered = TRUE),
+
+    # colas largas (solo para gráficos/EDA)
+    log_price = log1p(price),
+    log_pos_ratings = log1p(positive_ratings),
+
+    # contadores (si existen columnas)
+    n_genres     = if ("genres" %in% names(steam)) count_semicolon(genres) else NA_integer_,
+    n_categories = if ("categories" %in% names(steam)) count_semicolon(categories) else NA_integer_,
+    n_tags       = if ("steamspy_tags" %in% names(steam)) count_semicolon(steamspy_tags) else NA_integer_
+  )
+```
+
+## Análisis univariado
+
+### Variables numéricas
+
+A continuación se resume numéricamente el catálogo y se comentan fenómenos típicos en mercados digitales: **asimetría**, **colas largas** y **exceso de ceros** en algunas métricas agregadas.
+
+```{r}
+#| label: eda-num-summary
+#| echo: true
+
+q <- function(x, p) as.numeric(quantile(x, p, na.rm = TRUE))
+
+num_stats <- tibble::tibble(
+  variable = c("price", "positive_ratings", "negative_ratings", "average_playtime",
+               "median_playtime", "achievements", "required_age"),
+  n = c(sum(!is.na(steam$price)),
+        sum(!is.na(steam$positive_ratings)),
+        sum(!is.na(steam$negative_ratings)),
+        sum(!is.na(steam$average_playtime)),
+        sum(!is.na(steam$median_playtime)),
+        sum(!is.na(steam$achievements)),
+        sum(!is.na(steam$required_age))),
+  p25 = c(q(steam$price, 0.25),
+          q(steam$positive_ratings, 0.25),
+          q(steam$negative_ratings, 0.25),
+          q(steam$average_playtime, 0.25),
+          q(steam$median_playtime, 0.25),
+          q(steam$achievements, 0.25),
+          q(steam$required_age, 0.25)),
+  median = c(q(steam$price, 0.50),
+             q(steam$positive_ratings, 0.50),
+             q(steam$negative_ratings, 0.50),
+             q(steam$average_playtime, 0.50),
+             q(steam$median_playtime, 0.50),
+             q(steam$achievements, 0.50),
+             q(steam$required_age, 0.50)),
+  p75 = c(q(steam$price, 0.75),
+          q(steam$positive_ratings, 0.75),
+          q(steam$negative_ratings, 0.75),
+          q(steam$average_playtime, 0.75),
+          q(steam$median_playtime, 0.75),
+          q(steam$achievements, 0.75),
+          q(steam$required_age, 0.75)),
+  max = c(max(steam$price, na.rm = TRUE),
+          max(steam$positive_ratings, na.rm = TRUE),
+          max(steam$negative_ratings, na.rm = TRUE),
+          max(steam$average_playtime, na.rm = TRUE),
+          max(steam$median_playtime, na.rm = TRUE),
+          max(steam$achievements, na.rm = TRUE),
+          max(steam$required_age, na.rm = TRUE))
+)
+
+num_stats
+```
+
+Observaciones principales:
+
+- **Precio (`price`)**: presenta asimetría a la derecha y valores atípicos. Además, existe una fracción no despreciable de juegos **gratuitos**.
+- **Valoraciones (`positive_ratings`, `negative_ratings`)**: muestran colas largas extremas (pocos títulos concentran un volumen masivo de valoraciones). Esto justifica visualizar en escala `log1p()`.
+- **Tiempos de juego (`average_playtime`, `median_playtime`)**: suelen presentar una gran proporción de ceros, que pueden reflejar ausencia de uso registrado o ausencia de información.
+
+Como ejemplo de distribución asimétrica, se representa el precio truncado a valores < 100 para mejorar legibilidad.
+
+```{r}
+#| label: eda-price-hist
+#| echo: true
+#| fig-width: 7
+#| fig-height: 4
+
+steam %>%
+  filter(price < 100) %>%
+  ggplot(aes(x = price)) +
+  geom_histogram(
+  bins = 40,
+  fill = pal_eda[1],
+  color = "white",
+  alpha = 0.9
+  )
+  labs(
+    title = "Distribución del precio (truncado a price < 100)",
+    x = "Precio",
+    y = "Frecuencia"
+  )
+```
+
+### Variables categóricas
+
+Se describen variables estructurales del catálogo: disponibilidad en inglés, intervalos de propietarios y combinaciones de plataformas.
+
+```{r}
+#| label: eda-cat-tables
+#| echo: true
+
+prop_english <- mean(steam$english == 1, na.rm = TRUE)
+
+owners_tab <- steam %>%
+  count(owners, sort = TRUE) %>%
+  mutate(pct = n / sum(n))
+
+platforms_tab <- steam %>%
+  count(platforms, sort = TRUE) %>%
+  slice_head(n = 8) %>%
+  mutate(pct = n / sum(n))
+
+list(
+  prop_english = prop_english,
+  owners_top   = owners_tab %>% slice_head(n = 8),
+  platforms_top = platforms_tab
+)
+```
+
+- **Inglés**: aproximadamente `r round(100 * prop_english, 1)`% del catálogo está disponible en inglés.
+- **Owners**: al ser intervalos, se interpretan ordinalmente (no como recuento exacto). Predominan los intervalos bajos.
+- **Plataformas**: se observa una alta frecuencia de combinaciones que incluyen Windows.
+
+```{r}
+#| label: eda-english-bar
+#| echo: true
+#| fig-width: 6
+#| fig-height: 4
+
+steam %>%
+  mutate(english = if_else(english == 1, "Sí", "No")) %>%
+  count(english) %>%
+  ggplot(aes(x = english, y = n)) +
+  geom_col(aes(fill = english)) +
+  scale_fill_manual(values = c("No" = pal_eda[4], "Sí" = pal_eda[1])) +
+  theme(legend.position = "none") +
+  labs(
+    title = "Disponibilidad en inglés",
+    x = NULL,
+    y = "Número de juegos"
+  )
+```
+
+```{r}
+#| label: eda-owners-bar
+#| echo: true
+
+owners_plot <- owners_tab %>%
+  slice_head(n = 8) %>%
+  mutate(owners = forcats::fct_reorder(owners, pct))  
+
+ggplot(owners_plot, aes(x = owners, y = pct, fill = owners)) +
+  geom_col(show.legend = FALSE, width = 0.8) +
+  coord_flip() +
+  scale_fill_manual(values = pal_eda) +
+  scale_y_continuous(labels = function(x) paste0(round(x, 1), "%")) +
+  labs(
+    title = "Distribución por intervalos de propietarios (top 8)",
+    x = "Intervalo de propietarios",
+    y = "% del total"
+  )
+```
+
+```{r}
+#| label: eda-platforms-bar
+#| echo: true
+
+platforms_plot <- platforms_tab %>%
+  mutate(platforms = forcats::fct_reorder(platforms, pct))
+
+ggplot(platforms_plot, aes(x = platforms, y = pct, fill = platforms)) +
+  geom_col(show.legend = FALSE, width = 0.8) +
+  coord_flip() +
+  scale_fill_manual(values = pal_eda) +
+  scale_y_continuous(labels = function(x) paste0(round(x, 1), "%")) +
+  labs(
+    title = "Combinaciones de plataformas más frecuentes (top 8)",
+    x = "Plataformas",
+    y = "% dentro del top 8"
+  )
+```
+
+## Análisis bivariado
+
+### Precio y popularidad (escala logarítmica)
+
+Se explora la asociación entre precio y volumen de valoraciones positivas usando `log(1 + x)`, que reduce el peso de outliers.
+
+```{r}
+#| label: eda-price-vs-ratings
+#| echo: true
+#| fig-width: 7
+#| fig-height: 4
+
+ggplot(steam, aes(x = log_price, y = log_pos_ratings)) +
+  geom_point(color = pal_eda[1], alpha = 0.18, size = 1) +
+  geom_smooth(se = FALSE, colour = pal_eda["red"])
+  labs(
+    title = "Precio vs valoraciones positivas (ambas en log1p)",
+    x = "log(1 + price)",
+    y = "log(1 + positive_ratings)"
+  )
+```
+
+Interpretación: la relación no es lineal; sin embargo, los títulos con mayor volumen de valoraciones tienden a concentrarse en rangos de precio bajos o moderados.
+
+### Metadatos multietiqueta (conteo) y popularidad
+
+Como aproximación rápida a variables multietiqueta, se utilizan contadores (número de géneros/categorías/tags).
+
+```{r}
+#| label: eda-genres-vs-ratings
+#| echo: true
+#| fig-width: 7
+#| fig-height: 4
+
+ggplot(steam, aes(x = n_genres, y = log_pos_ratings)) +
+  geom_jitter(
+    color = pal_eda[1],
+    alpha = 0.12,
+    width = 0.25,
+    height = 0,
+    size = 1
+  ) 
+  labs(
+    title = "Número de géneros vs popularidad (log1p)",
+    x = "Número de géneros (conteo por ';')",
+    y = "log(1 + positive_ratings)"
+  )
+```
+
+Interpretación: la mayor parte del catálogo concentra pocos géneros; la asociación con popularidad suele ser débil, pero puede aportar señal marginal combinada con otros predictores.
+
+### Multiplataforma vs solo Windows
+
+```{r}
+#| label: eda-platforms-popularity
+#| echo: true
+#| fig-width: 7
+#| fig-height: 4
+
+steam %>%
+  mutate(multiplatform = if_else(platforms == "windows", "Solo Windows", "Multiplataforma")) %>%
+  ggplot(aes(x = multiplatform, y = log_pos_ratings)) +
+  geom_boxplot(
+  aes(fill = multiplatform),
+  alpha = 0.8,
+  width = 0.6,
+  outlier.alpha = 0.25
+  ) +
+  scale_fill_manual(values = pal_eda[c(1,2)]) +
+  theme(legend.position = "none")
+  labs(
+    title = "Popularidad según soporte multiplataforma (log1p)",
+    x = NULL,
+    y = "log(1 + positive_ratings)"
+  )
+```
+
+Interpretación: si aparece una mediana mayor en títulos multiplataforma, debe leerse como patrón descriptivo (no causal) y con alta dispersión.
+
+## Análisis multivariado
+
+Para detectar dependencias globales entre variables numéricas, se calcula la matriz de correlaciones (Pearson) y se visualiza como mapa de calor.
+
+```{r}
+#| label: eda-correlations
+#| echo: true
+#| fig-width: 7
+#| fig-height: 5
+
+num_vars <- steam %>%
+  transmute(
+    price,
+    achievements,
+    n_genres,
+    n_categories,
+    n_tags,
+    positive_ratings,
+    negative_ratings,
+    average_playtime,
+    median_playtime
+  )
+
+cor_mat <- cor(num_vars, use = "pairwise.complete.obs")
+
+cor_long <- as.data.frame(as.table(cor_mat)) %>%
+  rename(var1 = Var1, var2 = Var2, cor = Freq)
+
+ggplot(cor_long, aes(x = var1, y = var2, fill = cor)) +
+  geom_tile() +
+  scale_fill_gradient2(
+    low = "#3B4CC0", mid = "white", high = "#B40426",
+    midpoint = 0
+  ) +
+  coord_fixed() +
+  labs(
+    title = "Matriz de correlación (Pearson)",
+    x = NULL, y = NULL
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Lectura típica en este dataset: `positive_ratings` y `negative_ratings` suelen estar fuertemente correlacionadas (juegos con gran exposición acumulan tanto valoraciones positivas como negativas). El resto de variables aporta señales más independientes.
+
+## Limitaciones y consideraciones de calidad
+
+```{r}
+#| label: eda-quality-metrics
+#| include: false
+
+prop_free <- mean(steam$price == 0, na.rm = TRUE)
+prop_avg0 <- mean(steam$average_playtime == 0, na.rm = TRUE)
+prop_med0 <- mean(steam$median_playtime == 0, na.rm = TRUE)
+```
+
+- **Variables multietiqueta** (`platforms`, `genres`, `categories`, `steamspy_tags`) están codificadas como texto con separador `;`. Para un análisis detallado por etiqueta sería necesaria una normalización (explosión a formato largo).
+- **Owners** es un intervalo categórico: útil como ordinal, pero limita análisis cuantitativos finos.
+- **Exceso de ceros en playtime**: `average_playtime` = 0 en ≈ `r round(100 * prop_avg0, 2)`% y `median_playtime` = 0 en ≈ `r round(100 * prop_med0, 2)`%.
+- **Outliers**: existen precios y recuentos de valoraciones extremos; en capítulos posteriores se justifica el uso de transformaciones logarítmicas.
+- **Agregación**: el dataset está a nivel de juego; no permite inferencia de preferencias/uso a nivel de usuario.
+
+## Conclusión del EDA
+
+El catálogo presenta **alta concentración de popularidad** (colas largas en valoraciones) y una estructura de precios asimétrica con una fracción de juegos **gratuitos** (≈ `r round(100 * prop_free, 2)`%). Variables como precio, soporte multiplataforma y metadatos de catálogo muestran patrones descriptivos plausibles y motivan el modelado supervisado de los capítulos siguientes.

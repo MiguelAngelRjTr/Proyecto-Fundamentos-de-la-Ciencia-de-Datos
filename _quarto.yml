@@ -1,0 +1,36 @@
+project:
+  type: book
+
+book:
+  author: "MARJ-FCD_UAX@2025"
+  chapters:
+    - index.qmd
+    - 02-introduccion.qmd
+    
+    - part: "Datos"
+      chapters:
+        - 03-comprension-datos.qmd
+        - 04-eda.qmd
+        
+    - part: "Modelos"
+      chapters:
+        - 05-preparacion.qmd
+        - 06-regresion-lineal.qmd
+        - 07-regresion-logistica.qmd
+        
+    - referencias.qmd
+
+format:
+  html:
+    lang: es
+    toc: true
+    number-sections: true
+    code-fold: true
+    code-summary: "Mostrar código"
+    theme: cosmo
+    css: styles.css
+    
+execute:
+  echo: false
+  message: false
+  warning: false

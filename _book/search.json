@@ -1,0 +1,559 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Portada",
+    "section": "",
+    "text": "Factores que afectan al éxito en Steam\n\n\n\n\n  \n    \n  \n\n  \n    Autor: Miguel Angel Rojas Torres\n    Curso: Fundamentos de Ciencia de Datos\n    Profesora: Dra. Romy Rodríguez Ravines\n    Fecha: 30/01/2026\n\n    \n\n    \n      Este libro documenta un flujo completo de Ciencia de Datos aplicado a un catálogo\n      de videojuegos de Steam: comprensión, EDA, preparación y modelización supervisada\n      (regresión lineal y logística), con evaluación y discusión de resultados.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Portada</span>"
+    ]
+  },
+  {
+    "objectID": "02-introduccion.html",
+    "href": "02-introduccion.html",
+    "title": "2  Introducción",
+    "section": "",
+    "text": "2.1 Justificación del Proyecto\nLa industria del videojuego digital es un entorno altamente competitivo, donde la visibilidad y la aceptación del público condicionan directamente el éxito comercial de un título. En plataformas como Steam, miles de juegos compiten simultáneamente, y las métricas de valoración de usuarios constituyen una señal clave de popularidad y rendimiento.\nEste proyecto aplica fundamentos de Ciencia de Datos para:\nEl objetivo principal es desarrollar un flujo reproducible que conecte exploración, preparación y modelización.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "02-introduccion.html#justificación-del-proyecto",
+    "href": "02-introduccion.html#justificación-del-proyecto",
+    "title": "2  Introducción",
+    "section": "",
+    "text": "Analizar patrones asociados a la recepción de los juegos,\n\nIdentificar factores relevantes en su popularidad,\n\nConstruir modelos predictivos sencillos e interpretables.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "02-introduccion.html#crisp-dm-como-metodología",
+    "href": "02-introduccion.html#crisp-dm-como-metodología",
+    "title": "2  Introducción",
+    "section": "2.2 CRISP-DM como Metodología",
+    "text": "2.2 CRISP-DM como Metodología\nEl proyecto se estructura siguiendo las fases del estándar CRISP-DM (Cross-Industry Standard Process for Data Mining), adaptado al análisis de videojuegos:\n\nComprensión del negocio\n\nComprensión de los datos\n\nPreparación de los datos\n\nAnálisis exploratorio (EDA)\n\nModelado\n\nEvaluación\n\nPresentación de resultados\n\nEste marco garantiza un desarrollo lógico y sistemático del análisis.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "02-introduccion.html#problema-de-negocio-y-preguntas-de-investigación",
+    "href": "02-introduccion.html#problema-de-negocio-y-preguntas-de-investigación",
+    "title": "2  Introducción",
+    "section": "2.3 Problema de Negocio y Preguntas de Investigación",
+    "text": "2.3 Problema de Negocio y Preguntas de Investigación\nEl problema abordado es comprender y predecir la popularidad de videojuegos en Steam utilizando atributos disponibles en el catálogo.\nSe plantean las siguientes preguntas:\n\n¿Qué variables del catálogo se asocian con un mayor número de valoraciones positivas?\n¿Existen patrones sistemáticos según precio, plataformas o categorías?\n¿Es posible predecir si un juego será altamente popular a partir de sus características?",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "02-introduccion.html#objetivos",
+    "href": "02-introduccion.html#objetivos",
+    "title": "2  Introducción",
+    "section": "2.4 Objetivos",
+    "text": "2.4 Objetivos\n\n2.4.1 Objetivo general\nDesarrollar modelos predictivos para explicar y estimar la popularidad de videojuegos en Steam a partir de variables de catálogo.\n\n\n2.4.2 Objetivos específicos\n\nRealizar un análisis exploratorio del dataset Steam para identificar distribuciones, outliers y relaciones relevantes.\nPreparar los datos mediante limpieza, transformación y generación de variables derivadas.\nAjustar un modelo de regresión lineal para modelar el volumen de valoraciones positivas (en escala logarítmica).\nAjustar un modelo de regresión logística para clasificar juegos populares (top 10%).\nEvaluar los modelos mediante métricas apropiadas y discutir sus limitaciones.\nDocumentar todo el proceso en un informe reproducible en formato Quarto Book.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "02-introduccion.html#fuentes-de-datos",
+    "href": "02-introduccion.html#fuentes-de-datos",
+    "title": "2  Introducción",
+    "section": "2.5 Fuentes de Datos",
+    "text": "2.5 Fuentes de Datos\nDataset utilizado\nSe emplea el dataset Steam Games Catalogue, descargado desde Kaggle, que contiene información de miles de videojuegos disponibles en Steam.\nIncluye variables como:\n\nPrecio (price)\nEdad mínima (required_age)\nPlataformas soportadas (windows, mac, linux)\nCategorías, géneros y etiquetas\nValoraciones positivas y negativas (positive_ratings, negative_ratings)",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "02-introduccion.html#plan-de-trabajo",
+    "href": "02-introduccion.html#plan-de-trabajo",
+    "title": "2  Introducción",
+    "section": "2.6 Plan de Trabajo",
+    "text": "2.6 Plan de Trabajo\nLa siguiente tabla describe el cronograma del proyecto en semanas:",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "02-introduccion.html#metodología",
+    "href": "02-introduccion.html#metodología",
+    "title": "2  Introducción",
+    "section": "2.7 Metodología",
+    "text": "2.7 Metodología\nEl enfoque metodológico se basa en las fases de CRISP-DM (Cross-Industry Standard Process for Data Mining), adaptadas al objetivo del proyecto: analizar y predecir señales de popularidad en videojuegos de Steam a partir de variables de catálogo. Este marco proporciona una estructura ordenada para conectar el problema, los datos, la preparación, el modelado y la evaluación.\n\n2.7.1 Comprensión del negocio\n\nNecesidad / objetivo analítico: entender qué atributos de un videojuego (precio, plataformas, metadatos de catálogo) se asocian con una mayor aceptación por parte de usuarios y si es posible anticipar dicha aceptación con modelos simples.\nTraducción a preguntas operativas:\n\n¿Qué variables se relacionan con un mayor volumen de valoraciones positivas?\n¿Qué patrones se observan por precio, plataformas soportadas y metadatos (géneros, categorías, etiquetas)?\n¿Se puede construir un modelo que clasifique juegos “populares” con criterios reproducibles?\n\nDefinición de objetivos modelizables:\n\nRegresión: estimar \\(log(1+positive\\_ratings)\\) como proxy continuo de recepción.\nClasificación: predecir popular como pertenencia al top 10% en positive_ratings (criterio definido en preparación).\n\n\n\n\n2.7.2 Comprensión de los datos\n\nRevisión inicial del dataset:\n\nIdentificación de estructura (tipos de variables: numéricas, binarias/categóricas) y coherencia de rangos.\nRevisión de distribuciones y posibles asimetrías (p. ej., ratings con cola larga).\n\nCalidad de datos:\n\nDetección de valores faltantes (si existen) y evaluación del impacto en variables clave.\nIdentificación de valores atípicos evidentes (p. ej., precios extremos o recuentos anómalos).\n\nContextualización de variables:\n\nVariables de catálogo (precio, plataformas, metadatos) como predictores disponibles antes de la respuesta del mercado.\nVariables de valoración (positive/negative ratings) como resultados observados del comportamiento de usuarios.\n\n\n\n\n2.7.3 Preparación de los datos\n\nLimpieza y consistencia:\n\nRevisión de tipos de datos y recodificación si procede (p. ej., indicadores lógicos a 0/1 cuando el modelo lo requiera).\nTratamiento de inconsistencias básicas (valores imposibles o no informativos).\n\nTransformaciones del target:\n\nPara regresión, se transforma el target mediante \\(y=log(1+positive\\_ratings)\\) con el fin de reducir asimetría y estabilizar parcialmente la varianza.\n\nIngeniería de variables:\n\nGeneración de variables derivadas relevantes para modelado (p. ej., conteos de categorías/géneros/tags y transformaciones logarítmicas de variables con cola larga como precio o logros).\n\nPersistencia del dataset preparado:\n\nGuardado del dataset final preprocesado en data/steam_model.rds para garantizar que los capítulos de modelado reutilicen exactamente la misma versión de datos.\n\n\n\n\n2.7.4 Análisis exploratorio de datos (EDA)\n\nDistribución de variables clave:\n\nExploración de asimetrías, dispersión, outliers y escalas (especialmente en ratings y precio).\n\nRelaciones bivariadas:\n\nEvaluación de patrones preliminares entre predictores y variables objetivo (p. ej., asociación entre precio y popularidad; diferencias por soporte de plataforma).\n\nHipótesis de trabajo para modelado:\n\nIdentificación de variables plausiblemente informativas y de relaciones no lineales que puedan justificar transformaciones.\n\n\n\n\n2.7.5 Modelado\n\nRegresión lineal (baseline explicable):\n\nAjuste de un modelo lineal para \\(log(1+positive\\_ratings)\\), con separación train/test y evaluación de errores (RMSE/MAE).\nObjetivo: obtener una aproximación interpretable y cuantificar capacidad predictiva básica.\n\nRegresión logística (clasificación binaria):\n\nAjuste de un modelo logístico para predecir popular (top 10% por positive_ratings).\nObjetivo: modelar \\(P(y=1\\mid X)\\) y analizar la contribución relativa de predictores mediante odds ratios.\n\n\n\n\n2.7.6 Evaluación\n\nRegresión:\n\nEvaluación del rendimiento con métricas en test (RMSE y MAE) y diagnóstico cualitativo mediante análisis de residuos.\nDiscusión de estabilidad del error a lo largo del rango del target (p. ej., mayor error en juegos extremadamente populares).\n\nClasificación:\n\nEvaluación con métricas adecuadas a desbalance (precision, recall, AUC) y revisión de calibración.\nInterpretación de coeficientes (OR) y discusión de limitaciones del proxy popular.\n\n\n\n\n2.7.7 Entregables\n\nInforme técnico reproducible en Quarto Book, con:\n\nJustificación, metodología, EDA, preparación, modelado y evaluación,\nResultados interpretados y conclusiones.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "02-introduccion.html#tecnología",
+    "href": "02-introduccion.html#tecnología",
+    "title": "2  Introducción",
+    "section": "2.8 Tecnología",
+    "text": "2.8 Tecnología\n\n2.8.1 Lenguaje y entorno\n\nR como lenguaje principal para la manipulación de datos, visualización y modelado estadístico.\nDesarrollo en RStudio para ejecución interactiva y depuración.\nDocumentación reproducible con Quarto Book, integrando narrativa, tablas y figuras generadas desde R.\n\n\n\n2.8.2 Librerías principales\n\nManipulación de datos:\n\ndplyr, tidyr\n\nVisualización:\n\nggplot2\n\nModelado y utilidades:\n\nstats (ajuste de modelos lineales y logísticos)\nbroom (extracción ordenada de coeficientes y métricas)\n\n\n\n\n2.8.3 Gestión de versiones\nUso de GitHub para documentar el progreso y mantener el historial de versiones en: https://github.com/MiguelAngelRjTr/Proyecto-Fundamentos-de-la-Ciencia-de-Datos.git",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "03-comprension-datos.html",
+    "href": "03-comprension-datos.html",
+    "title": "3  Comprensión de los Datos",
+    "section": "",
+    "text": "3.1 Evaluación inicial de Dataset\nA continuación, se realiza una evaluación inicial del dataset cargado desde el archivo CSV. Esta evaluación incluye información básica como número de filas y columnas, nombres de las columnas y su estructura general.\nVisualización Inicial del Dataset\nMostrar código\n# Mostrar las primeras filas del dataset\nhead(steam)\n\n\n# A tibble: 6 × 18\n  appid name     release_date english developer publisher platforms required_age\n  &lt;dbl&gt; &lt;chr&gt;    &lt;date&gt;         &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;            &lt;dbl&gt;\n1    10 Counter… 2000-11-01         1 Valve     Valve     windows;…            0\n2    20 Team Fo… 1999-04-01         1 Valve     Valve     windows;…            0\n3    30 Day of … 2003-05-01         1 Valve     Valve     windows;…            0\n4    40 Deathma… 2001-06-01         1 Valve     Valve     windows;…            0\n5    50 Half-Li… 1999-11-01         1 Gearbox … Valve     windows;…            0\n6    60 Ricochet 2000-11-01         1 Valve     Valve     windows;…            0\n# ℹ 10 more variables: categories &lt;chr&gt;, genres &lt;chr&gt;, steamspy_tags &lt;chr&gt;,\n#   achievements &lt;dbl&gt;, positive_ratings &lt;dbl&gt;, negative_ratings &lt;dbl&gt;,\n#   average_playtime &lt;dbl&gt;, median_playtime &lt;dbl&gt;, owners &lt;chr&gt;, price &lt;dbl&gt;\nDimensiones del dataset\nMostrar código\nn_filas &lt;- nrow(steam)\nn_columnas &lt;- ncol(steam)\nEl conjunto de datos contiene 27075 observaciones (videojuegos) y 18 variables. A continuación se muestra un resumen numérico global y el porcentaje de valores ausentes por columna.\nMostrar código\nnum_df &lt;- steam[, sapply(steam, is.numeric), drop = FALSE]\nprop_na = round(100 * colMeans(is.na(steam)), 2)\n\nsummary(num_df)\n\n\n     appid            english        required_age      achievements    \n Min.   :     10   Min.   :0.0000   Min.   : 0.0000   Min.   :   0.00  \n 1st Qu.: 401230   1st Qu.:1.0000   1st Qu.: 0.0000   1st Qu.:   0.00  \n Median : 599070   Median :1.0000   Median : 0.0000   Median :   7.00  \n Mean   : 596204   Mean   :0.9811   Mean   : 0.3549   Mean   :  45.25  \n 3rd Qu.: 798760   3rd Qu.:1.0000   3rd Qu.: 0.0000   3rd Qu.:  23.00  \n Max.   :1069460   Max.   :1.0000   Max.   :18.0000   Max.   :9821.00  \n positive_ratings  negative_ratings average_playtime   median_playtime   \n Min.   :      0   Min.   :     0   Min.   :     0.0   Min.   :     0.0  \n 1st Qu.:      6   1st Qu.:     2   1st Qu.:     0.0   1st Qu.:     0.0  \n Median :     24   Median :     9   Median :     0.0   Median :     0.0  \n Mean   :   1001   Mean   :   211   Mean   :   149.8   Mean   :   146.1  \n 3rd Qu.:    126   3rd Qu.:    42   3rd Qu.:     0.0   3rd Qu.:     0.0  \n Max.   :2644404   Max.   :487076   Max.   :190625.0   Max.   :190625.0  \n     price        \n Min.   :  0.000  \n 1st Qu.:  1.690  \n Median :  3.990  \n Mean   :  6.078  \n 3rd Qu.:  7.190  \n Max.   :421.990  \n\n\nMostrar código\nprop_na\n\n\n           appid             name     release_date          english \n            0.00             0.00             0.00             0.00 \n       developer        publisher        platforms     required_age \n            0.00             0.02             0.00             0.00 \n      categories           genres    steamspy_tags     achievements \n            0.00             0.00             0.00             0.00 \npositive_ratings negative_ratings average_playtime  median_playtime \n            0.00             0.00             0.00             0.00 \n          owners            price \n            0.00             0.00\nEl resumen numérico confirma que varias variables presentan distribuciones fuertemente asimétricas, especialmente aquellas relacionadas con la popularidad del juego (positive_ratings, negative_ratings) y con el tiempo de uso (average_playtime, median_playtime). En estos casos, la diferencia entre la mediana y el máximo indica la presencia de colas largas: la mayoría de títulos acumulan pocas valoraciones, mientras que un subconjunto reducido concentra valores extremadamente altos.\nAsimismo, se observa una proporción relevante de ceros en variables como required_age y tiempos de juego, lo que es coherente con títulos sin restricción de edad o con baja actividad registrada.\nEn cuanto a calidad de datos, el porcentaje de valores ausentes es prácticamente nulo en la mayoría de columnas, con únicamente una fracción marginal en publisher. Esto sugiere que el dataset es adecuado para análisis predictivo sin necesidad de imputaciones complejas.\nDado este comportamiento, resulta justificada la transformación logarítmica aplicada posteriormente al target, con el objetivo de estabilizar la varianza y reducir el efecto de valores extremos en el modelado.\nNombres de las Columnas\nMostrar código\n# Listar nombres de las columnas\ncolnames(steam)\n\n\n [1] \"appid\"            \"name\"             \"release_date\"     \"english\"         \n [5] \"developer\"        \"publisher\"        \"platforms\"        \"required_age\"    \n [9] \"categories\"       \"genres\"           \"steamspy_tags\"    \"achievements\"    \n[13] \"positive_ratings\" \"negative_ratings\" \"average_playtime\" \"median_playtime\" \n[17] \"owners\"           \"price\"\nLos nombres de las columnas son descriptivos, lo que facilita identificar las variables y su propósito dentro del análisis.\nEstructura de las Variables\nMostrar código\n# Ver estructura del dataset\nstr(steam)\n\n\nspc_tbl_ [27,075 × 18] (S3: spec_tbl_df/tbl_df/tbl/data.frame)\n $ appid           : num [1:27075] 10 20 30 40 50 60 70 80 130 220 ...\n $ name            : chr [1:27075] \"Counter-Strike\" \"Team Fortress Classic\" \"Day of Defeat\" \"Deathmatch Classic\" ...\n $ release_date    : Date[1:27075], format: \"2000-11-01\" \"1999-04-01\" ...\n $ english         : num [1:27075] 1 1 1 1 1 1 1 1 1 1 ...\n $ developer       : chr [1:27075] \"Valve\" \"Valve\" \"Valve\" \"Valve\" ...\n $ publisher       : chr [1:27075] \"Valve\" \"Valve\" \"Valve\" \"Valve\" ...\n $ platforms       : chr [1:27075] \"windows;mac;linux\" \"windows;mac;linux\" \"windows;mac;linux\" \"windows;mac;linux\" ...\n $ required_age    : num [1:27075] 0 0 0 0 0 0 0 0 0 0 ...\n $ categories      : chr [1:27075] \"Multi-player;Online Multi-Player;Local Multi-Player;Valve Anti-Cheat enabled\" \"Multi-player;Online Multi-Player;Local Multi-Player;Valve Anti-Cheat enabled\" \"Multi-player;Valve Anti-Cheat enabled\" \"Multi-player;Online Multi-Player;Local Multi-Player;Valve Anti-Cheat enabled\" ...\n $ genres          : chr [1:27075] \"Action\" \"Action\" \"Action\" \"Action\" ...\n $ steamspy_tags   : chr [1:27075] \"Action;FPS;Multiplayer\" \"Action;FPS;Multiplayer\" \"FPS;World War II;Multiplayer\" \"Action;FPS;Multiplayer\" ...\n $ achievements    : num [1:27075] 0 0 0 0 0 0 0 0 0 33 ...\n $ positive_ratings: num [1:27075] 124534 3318 3416 1273 5250 ...\n $ negative_ratings: num [1:27075] 3339 633 398 267 288 ...\n $ average_playtime: num [1:27075] 17612 277 187 258 624 ...\n $ median_playtime : num [1:27075] 317 62 34 184 415 10 83 43 205 402 ...\n $ owners          : chr [1:27075] \"10000000-20000000\" \"5000000-10000000\" \"5000000-10000000\" \"5000000-10000000\" ...\n $ price           : num [1:27075] 7.19 3.99 3.99 3.99 3.99 3.99 7.19 7.19 3.99 7.19 ...\n - attr(*, \"spec\")=\n  .. cols(\n  ..   appid = col_double(),\n  ..   name = col_character(),\n  ..   release_date = col_date(format = \"\"),\n  ..   english = col_double(),\n  ..   developer = col_character(),\n  ..   publisher = col_character(),\n  ..   platforms = col_character(),\n  ..   required_age = col_double(),\n  ..   categories = col_character(),\n  ..   genres = col_character(),\n  ..   steamspy_tags = col_character(),\n  ..   achievements = col_double(),\n  ..   positive_ratings = col_double(),\n  ..   negative_ratings = col_double(),\n  ..   average_playtime = col_double(),\n  ..   median_playtime = col_double(),\n  ..   owners = col_character(),\n  ..   price = col_double()\n  .. )\n - attr(*, \"problems\")=&lt;externalptr&gt;\nSe identificaron variables categóricas y numéricas.",
+    "crumbs": [
+      "Datos",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Comprensión de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "03-comprension-datos.html#resumen-de-las-variables",
+    "href": "03-comprension-datos.html#resumen-de-las-variables",
+    "title": "3  Comprensión de los Datos",
+    "section": "3.2 Resumen de las variables",
+    "text": "3.2 Resumen de las variables\nDe las 18 variables totales, varias se han importado como tipo numérico (double), es decir, han quedado almacenadas como variables numéricas discretas en muchos casos (por ejemplo, recuentos como positive_ratings, negative_ratings o achievements). Sin embargo, en algunos casos su naturaleza original es de variable numérica continua, como el precio (price) o, según la interpretación, medidas cuantitativas como los tiempos de juego en minutos (average_playtime y median_playtime). Además, el conjunto de datos incluye múltiples variables categóricas (character), entre ellas developer, publisher y varias variables multietiqueta (platforms, categories, genres, steamspy_tags) codificadas como listas de etiquetas separadas por punto y coma. Finalmente, la variable owners no se recoge como un número exacto, sino como un intervalo de propietarios estimados, por lo que debe tratarse como variable ordinal más que como magnitud numérica precisa.\nA continuación, se presenta un resumen detallado de cada variable y una breve descripción:\n\n\nMostrar código\n# Diccionario de variables Steam)\ndict &lt;- tibble::tribble(\n  ~variable,           ~tipo,                    ~descripcion,\n  \"appi\",             \"Numérica discreta\",      \"Identificador único del juego.\",\n  \"name\",              \"Categórica nominal\",     \"Nombre comercial del juego.\",\n  \"release_date\",      \"Fecha\",                  \"Fecha de lanzamiento en Steam (cuando está disponible).\",\n  \"english\",           \"Binaria (0/1)\",          \"Indicador de disponibilidad en inglés.\",\n  \"developer\",         \"Categórica nominal\",     \"Estudio o desarrollador principal.\",\n  \"publisher\",         \"Categórica nominal\",     \"Editor o distribuidor.\",\n  \"platforms\",         \"Categórica nominal\",     \"Plataformas soportadas (p.ej., windows;mac;linux) codificadas como texto.\",\n  \"required_age\",      \"Numérica discreta\",      \"Edad mínima requerida o recomendada.\",\n  \"categories\",        \"Categórica nominal\",     \"Categorías del juego (lista separada por ';').\",\n  \"genres\",            \"Categórica nominal\",     \"Géneros del juego (lista separada por ';').\",\n  \"steamspy_tags\",     \"Categórica nominal\",     \"Etiquetas agregadas (SteamSpy), codificadas como texto.\",\n  \"achievements\",      \"Numérica discreta\",      \"Número de logros disponibles.\",\n  \"positive_ratings\",  \"Numérica discreta\",      \"Recuento de valoraciones positivas agregadas.\",\n  \"negative_ratings\",  \"Numérica discreta\",      \"Recuento de valoraciones negativas agregadas.\",\n  \"average_playtime\",  \"Numérica discreta\",      \"Tiempo medio de juego por usuario (minutos).\",\n  \"median_playtime\",   \"Numérica discreta\",      \"Tiempo mediano de juego por usuario (minutos).\",\n  \"owners\",            \"Categórica ordinal\",     \"Intervalo estimado de propietarios (p.ej., 0-20000, 20000-50000).\",\n  \"price\",             \"Numérica continua\",      \"Precio del juego.\"\n)\n\ndict %&gt;%\n  transmute(\n    `Nombre de la Variable` = variable,\n    `Tipo` = tipo,\n    `Descripción` = descripcion\n  ) %&gt;%\n  knitr::kable(format = \"html\", escape = TRUE) %&gt;%\n  kable_styling(full_width = TRUE, bootstrap_options = c(\"striped\")) %&gt;%\n  column_spec(1, width = \"20em\") %&gt;%\n  column_spec(2, width = \"14em\") %&gt;%\n  column_spec(3, width = \"40em\")\n\n\n\n\n\nNombre de la Variable\nTipo\nDescripción\n\n\n\n\nappi\nNumérica discreta\nIdentificador único del juego.\n\n\nname\nCategórica nominal\nNombre comercial del juego.\n\n\nrelease_date\nFecha\nFecha de lanzamiento en Steam (cuando está disponible).\n\n\nenglish\nBinaria (0/1)\nIndicador de disponibilidad en inglés.\n\n\ndeveloper\nCategórica nominal\nEstudio o desarrollador principal.\n\n\npublisher\nCategórica nominal\nEditor o distribuidor.\n\n\nplatforms\nCategórica nominal\nPlataformas soportadas (p.ej., windows;mac;linux) codificadas como texto.\n\n\nrequired_age\nNumérica discreta\nEdad mínima requerida o recomendada.\n\n\ncategories\nCategórica nominal\nCategorías del juego (lista separada por ';').\n\n\ngenres\nCategórica nominal\nGéneros del juego (lista separada por ';').\n\n\nsteamspy_tags\nCategórica nominal\nEtiquetas agregadas (SteamSpy), codificadas como texto.\n\n\nachievements\nNumérica discreta\nNúmero de logros disponibles.\n\n\npositive_ratings\nNumérica discreta\nRecuento de valoraciones positivas agregadas.\n\n\nnegative_ratings\nNumérica discreta\nRecuento de valoraciones negativas agregadas.\n\n\naverage_playtime\nNumérica discreta\nTiempo medio de juego por usuario (minutos).\n\n\nmedian_playtime\nNumérica discreta\nTiempo mediano de juego por usuario (minutos).\n\n\nowners\nCategórica ordinal\nIntervalo estimado de propietarios (p.ej., 0-20000, 20000-50000).\n\n\nprice\nNumérica continua\nPrecio del juego.",
+    "crumbs": [
+      "Datos",
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Comprensión de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "04-eda.html",
+    "href": "04-eda.html",
+    "title": "4  Análisis Exploratorio de Datos",
+    "section": "",
+    "text": "4.1 Preparación mínima para EDA\nEn este capítulo se aplica una preparación mínima orientada a visualización y descripción (no al modelado):",
+    "crumbs": [
+      "Datos",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Análisis Exploratorio de Datos</span>"
+    ]
+  },
+  {
+    "objectID": "04-eda.html#preparación-mínima-para-eda",
+    "href": "04-eda.html#preparación-mínima-para-eda",
+    "title": "4  Análisis Exploratorio de Datos",
+    "section": "",
+    "text": "Normalizar release_date como fecha y derivar release_year.\nTratar owners como variable ordinal (intervalos).\nConstruir transformaciones log1p() solo para variables con colas largas (price, positive_ratings).\nResumir columnas multietiqueta (separadas por ;) mediante contadores simples.",
+    "crumbs": [
+      "Datos",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Análisis Exploratorio de Datos</span>"
+    ]
+  },
+  {
+    "objectID": "04-eda.html#análisis-univariado",
+    "href": "04-eda.html#análisis-univariado",
+    "title": "4  Análisis Exploratorio de Datos",
+    "section": "4.2 Análisis univariado",
+    "text": "4.2 Análisis univariado\n\n4.2.1 Variables numéricas\nA continuación se resume numéricamente el catálogo y se comentan fenómenos típicos en mercados digitales: asimetría, colas largas y exceso de ceros en algunas métricas agregadas.\n\n\nMostrar código\nq &lt;- function(x, p) as.numeric(quantile(x, p, na.rm = TRUE))\n\nnum_stats &lt;- tibble::tibble(\n  variable = c(\"price\", \"positive_ratings\", \"negative_ratings\", \"average_playtime\",\n               \"median_playtime\", \"achievements\", \"required_age\"),\n  n = c(sum(!is.na(steam$price)),\n        sum(!is.na(steam$positive_ratings)),\n        sum(!is.na(steam$negative_ratings)),\n        sum(!is.na(steam$average_playtime)),\n        sum(!is.na(steam$median_playtime)),\n        sum(!is.na(steam$achievements)),\n        sum(!is.na(steam$required_age))),\n  p25 = c(q(steam$price, 0.25),\n          q(steam$positive_ratings, 0.25),\n          q(steam$negative_ratings, 0.25),\n          q(steam$average_playtime, 0.25),\n          q(steam$median_playtime, 0.25),\n          q(steam$achievements, 0.25),\n          q(steam$required_age, 0.25)),\n  median = c(q(steam$price, 0.50),\n             q(steam$positive_ratings, 0.50),\n             q(steam$negative_ratings, 0.50),\n             q(steam$average_playtime, 0.50),\n             q(steam$median_playtime, 0.50),\n             q(steam$achievements, 0.50),\n             q(steam$required_age, 0.50)),\n  p75 = c(q(steam$price, 0.75),\n          q(steam$positive_ratings, 0.75),\n          q(steam$negative_ratings, 0.75),\n          q(steam$average_playtime, 0.75),\n          q(steam$median_playtime, 0.75),\n          q(steam$achievements, 0.75),\n          q(steam$required_age, 0.75)),\n  max = c(max(steam$price, na.rm = TRUE),\n          max(steam$positive_ratings, na.rm = TRUE),\n          max(steam$negative_ratings, na.rm = TRUE),\n          max(steam$average_playtime, na.rm = TRUE),\n          max(steam$median_playtime, na.rm = TRUE),\n          max(steam$achievements, na.rm = TRUE),\n          max(steam$required_age, na.rm = TRUE))\n)\n\nnum_stats\n\n\n# A tibble: 7 × 6\n  variable             n   p25 median    p75      max\n  &lt;chr&gt;            &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;\n1 price            27075  1.69   3.99   7.19     422.\n2 positive_ratings 27075  6     24    126    2644404 \n3 negative_ratings 27075  2      9     42     487076 \n4 average_playtime 27075  0      0      0     190625 \n5 median_playtime  27075  0      0      0     190625 \n6 achievements     27075  0      7     23       9821 \n7 required_age     27075  0      0      0         18 \n\n\nObservaciones principales:\n\nPrecio (price): presenta asimetría a la derecha y valores atípicos. Además, existe una fracción no despreciable de juegos gratuitos.\nValoraciones (positive_ratings, negative_ratings): muestran colas largas extremas (pocos títulos concentran un volumen masivo de valoraciones). Esto justifica visualizar en escala log1p().\nTiempos de juego (average_playtime, median_playtime): suelen presentar una gran proporción de ceros, que pueden reflejar ausencia de uso registrado o ausencia de información.\n\nComo ejemplo de distribución asimétrica, se representa el precio truncado a valores &lt; 100 para mejorar legibilidad.\n\n\nMostrar código\nsteam %&gt;%\n  filter(price &lt; 100) %&gt;%\n  ggplot(aes(x = price)) +\n  geom_histogram(\n  bins = 40,\n  fill = pal_eda[1],\n  color = \"white\",\n  alpha = 0.9\n  )\n\n\n\n\n\n\n\n\n\nMostrar código\n  labs(\n    title = \"Distribución del precio (truncado a price &lt; 100)\",\n    x = \"Precio\",\n    y = \"Frecuencia\"\n  )\n\n\n&lt;ggplot2::labels&gt; List of 3\n $ x    : chr \"Precio\"\n $ y    : chr \"Frecuencia\"\n $ title: chr \"Distribución del precio (truncado a price &lt; 100)\"\n\n\n\n\n4.2.2 Variables categóricas\nSe describen variables estructurales del catálogo: disponibilidad en inglés, intervalos de propietarios y combinaciones de plataformas.\n\n\nMostrar código\nprop_english &lt;- mean(steam$english == 1, na.rm = TRUE)\n\nowners_tab &lt;- steam %&gt;%\n  count(owners, sort = TRUE) %&gt;%\n  mutate(pct = n / sum(n))\n\nplatforms_tab &lt;- steam %&gt;%\n  count(platforms, sort = TRUE) %&gt;%\n  slice_head(n = 8) %&gt;%\n  mutate(pct = n / sum(n))\n\nlist(\n  prop_english = prop_english,\n  owners_top   = owners_tab %&gt;% slice_head(n = 8),\n  platforms_top = platforms_tab\n)\n\n\n$prop_english\n[1] 0.9811265\n\n$owners_top\n# A tibble: 8 × 3\n  owners              n     pct\n  &lt;ord&gt;           &lt;int&gt;   &lt;dbl&gt;\n1 0-20000         18596 0.687  \n2 20000-50000      3059 0.113  \n3 50000-100000     1695 0.0626 \n4 100000-200000    1386 0.0512 \n5 200000-500000    1272 0.0470 \n6 500000-1000000    513 0.0189 \n7 1000000-2000000   288 0.0106 \n8 2000000-5000000   193 0.00713\n\n$platforms_top\n# A tibble: 7 × 3\n  platforms             n       pct\n  &lt;chr&gt;             &lt;int&gt;     &lt;dbl&gt;\n1 windows           18398 0.680    \n2 windows;mac;linux  4623 0.171    \n3 windows;mac        3439 0.127    \n4 windows;linux       610 0.0225   \n5 mac                   3 0.000111 \n6 linux                 1 0.0000369\n7 mac;linux             1 0.0000369\n\n\n\nInglés: aproximadamente 98.1% del catálogo está disponible en inglés.\nOwners: al ser intervalos, se interpretan ordinalmente (no como recuento exacto). Predominan los intervalos bajos.\nPlataformas: se observa una alta frecuencia de combinaciones que incluyen Windows.\n\n\n\nMostrar código\nsteam %&gt;%\n  mutate(english = if_else(english == 1, \"Sí\", \"No\")) %&gt;%\n  count(english) %&gt;%\n  ggplot(aes(x = english, y = n)) +\n  geom_col(aes(fill = english)) +\n  scale_fill_manual(values = c(\"No\" = pal_eda[4], \"Sí\" = pal_eda[1])) +\n  theme(legend.position = \"none\") +\n  labs(\n    title = \"Disponibilidad en inglés\",\n    x = NULL,\n    y = \"Número de juegos\"\n  )\n\n\n\n\n\n\n\n\n\n\n\nMostrar código\nowners_plot &lt;- owners_tab %&gt;%\n  slice_head(n = 8) %&gt;%\n  mutate(owners = forcats::fct_reorder(owners, pct))  \n\nggplot(owners_plot, aes(x = owners, y = pct, fill = owners)) +\n  geom_col(show.legend = FALSE, width = 0.8) +\n  coord_flip() +\n  scale_fill_manual(values = pal_eda) +\n  scale_y_continuous(labels = function(x) paste0(round(x, 1), \"%\")) +\n  labs(\n    title = \"Distribución por intervalos de propietarios (top 8)\",\n    x = \"Intervalo de propietarios\",\n    y = \"% del total\"\n  )\n\n\n\n\n\n\n\n\n\n\n\nMostrar código\nplatforms_plot &lt;- platforms_tab %&gt;%\n  mutate(platforms = forcats::fct_reorder(platforms, pct))\n\nggplot(platforms_plot, aes(x = platforms, y = pct, fill = platforms)) +\n  geom_col(show.legend = FALSE, width = 0.8) +\n  coord_flip() +\n  scale_fill_manual(values = pal_eda) +\n  scale_y_continuous(labels = function(x) paste0(round(x, 1), \"%\")) +\n  labs(\n    title = \"Combinaciones de plataformas más frecuentes (top 8)\",\n    x = \"Plataformas\",\n    y = \"% dentro del top 8\"\n  )",
+    "crumbs": [
+      "Datos",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Análisis Exploratorio de Datos</span>"
+    ]
+  },
+  {
+    "objectID": "04-eda.html#análisis-bivariado",
+    "href": "04-eda.html#análisis-bivariado",
+    "title": "4  Análisis Exploratorio de Datos",
+    "section": "4.3 Análisis bivariado",
+    "text": "4.3 Análisis bivariado\n\n4.3.1 Precio y popularidad (escala logarítmica)\nSe explora la asociación entre precio y volumen de valoraciones positivas usando log(1 + x), que reduce el peso de outliers.\n\n\nMostrar código\nggplot(steam, aes(x = log_price, y = log_pos_ratings)) +\n  geom_point(color = pal_eda[1], alpha = 0.18, size = 1) +\n  geom_smooth(se = FALSE, colour = pal_eda[\"red\"])\n\n\n\n\n\n\n\n\n\nMostrar código\n  labs(\n    title = \"Precio vs valoraciones positivas (ambas en log1p)\",\n    x = \"log(1 + price)\",\n    y = \"log(1 + positive_ratings)\"\n  )\n\n\n&lt;ggplot2::labels&gt; List of 3\n $ x    : chr \"log(1 + price)\"\n $ y    : chr \"log(1 + positive_ratings)\"\n $ title: chr \"Precio vs valoraciones positivas (ambas en log1p)\"\n\n\nInterpretación: la relación no es lineal; sin embargo, los títulos con mayor volumen de valoraciones tienden a concentrarse en rangos de precio bajos o moderados.\n\n\n4.3.2 Metadatos multietiqueta (conteo) y popularidad\nComo aproximación rápida a variables multietiqueta, se utilizan contadores (número de géneros/categorías/tags).\n\n\nMostrar código\nggplot(steam, aes(x = n_genres, y = log_pos_ratings)) +\n  geom_jitter(\n    color = pal_eda[1],\n    alpha = 0.12,\n    width = 0.25,\n    height = 0,\n    size = 1\n  ) \n\n\n\n\n\n\n\n\n\nMostrar código\n  labs(\n    title = \"Número de géneros vs popularidad (log1p)\",\n    x = \"Número de géneros (conteo por ';')\",\n    y = \"log(1 + positive_ratings)\"\n  )\n\n\n&lt;ggplot2::labels&gt; List of 3\n $ x    : chr \"Número de géneros (conteo por ';')\"\n $ y    : chr \"log(1 + positive_ratings)\"\n $ title: chr \"Número de géneros vs popularidad (log1p)\"\n\n\nInterpretación: la mayor parte del catálogo concentra pocos géneros; la asociación con popularidad suele ser débil, pero puede aportar señal marginal combinada con otros predictores.\n\n\n4.3.3 Multiplataforma vs solo Windows\n\n\nMostrar código\nsteam %&gt;%\n  mutate(multiplatform = if_else(platforms == \"windows\", \"Solo Windows\", \"Multiplataforma\")) %&gt;%\n  ggplot(aes(x = multiplatform, y = log_pos_ratings)) +\n  geom_boxplot(\n  aes(fill = multiplatform),\n  alpha = 0.8,\n  width = 0.6,\n  outlier.alpha = 0.25\n  ) +\n  scale_fill_manual(values = pal_eda[c(1,2)]) +\n  theme(legend.position = \"none\")\n\n\n\n\n\n\n\n\n\nMostrar código\n  labs(\n    title = \"Popularidad según soporte multiplataforma (log1p)\",\n    x = NULL,\n    y = \"log(1 + positive_ratings)\"\n  )\n\n\n&lt;ggplot2::labels&gt; List of 3\n $ x    : NULL\n $ y    : chr \"log(1 + positive_ratings)\"\n $ title: chr \"Popularidad según soporte multiplataforma (log1p)\"\n\n\nInterpretación: si aparece una mediana mayor en títulos multiplataforma, debe leerse como patrón descriptivo (no causal) y con alta dispersión.",
+    "crumbs": [
+      "Datos",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Análisis Exploratorio de Datos</span>"
+    ]
+  },
+  {
+    "objectID": "04-eda.html#análisis-multivariado",
+    "href": "04-eda.html#análisis-multivariado",
+    "title": "4  Análisis Exploratorio de Datos",
+    "section": "4.4 Análisis multivariado",
+    "text": "4.4 Análisis multivariado\nPara detectar dependencias globales entre variables numéricas, se calcula la matriz de correlaciones (Pearson) y se visualiza como mapa de calor.\n\n\nMostrar código\nnum_vars &lt;- steam %&gt;%\n  transmute(\n    price,\n    achievements,\n    n_genres,\n    n_categories,\n    n_tags,\n    positive_ratings,\n    negative_ratings,\n    average_playtime,\n    median_playtime\n  )\n\ncor_mat &lt;- cor(num_vars, use = \"pairwise.complete.obs\")\n\ncor_long &lt;- as.data.frame(as.table(cor_mat)) %&gt;%\n  rename(var1 = Var1, var2 = Var2, cor = Freq)\n\nggplot(cor_long, aes(x = var1, y = var2, fill = cor)) +\n  geom_tile() +\n  scale_fill_gradient2(\n    low = \"#3B4CC0\", mid = \"white\", high = \"#B40426\",\n    midpoint = 0\n  ) +\n  coord_fixed() +\n  labs(\n    title = \"Matriz de correlación (Pearson)\",\n    x = NULL, y = NULL\n  ) +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1))\n\n\n\n\n\n\n\n\n\nLectura típica en este dataset: positive_ratings y negative_ratings suelen estar fuertemente correlacionadas (juegos con gran exposición acumulan tanto valoraciones positivas como negativas). El resto de variables aporta señales más independientes.",
+    "crumbs": [
+      "Datos",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Análisis Exploratorio de Datos</span>"
+    ]
+  },
+  {
+    "objectID": "04-eda.html#limitaciones-y-consideraciones-de-calidad",
+    "href": "04-eda.html#limitaciones-y-consideraciones-de-calidad",
+    "title": "4  Análisis Exploratorio de Datos",
+    "section": "4.5 Limitaciones y consideraciones de calidad",
+    "text": "4.5 Limitaciones y consideraciones de calidad\n\nVariables multietiqueta (platforms, genres, categories, steamspy_tags) están codificadas como texto con separador ;. Para un análisis detallado por etiqueta sería necesaria una normalización (explosión a formato largo).\nOwners es un intervalo categórico: útil como ordinal, pero limita análisis cuantitativos finos.\nExceso de ceros en playtime: average_playtime = 0 en ≈ 77.21% y median_playtime = 0 en ≈ 77.21%.\nOutliers: existen precios y recuentos de valoraciones extremos; en capítulos posteriores se justifica el uso de transformaciones logarítmicas.\nAgregación: el dataset está a nivel de juego; no permite inferencia de preferencias/uso a nivel de usuario.",
+    "crumbs": [
+      "Datos",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Análisis Exploratorio de Datos</span>"
+    ]
+  },
+  {
+    "objectID": "04-eda.html#conclusión-del-eda",
+    "href": "04-eda.html#conclusión-del-eda",
+    "title": "4  Análisis Exploratorio de Datos",
+    "section": "4.6 Conclusión del EDA",
+    "text": "4.6 Conclusión del EDA\nEl catálogo presenta alta concentración de popularidad (colas largas en valoraciones) y una estructura de precios asimétrica con una fracción de juegos gratuitos (≈ 9.46%). Variables como precio, soporte multiplataforma y metadatos de catálogo muestran patrones descriptivos plausibles y motivan el modelado supervisado de los capítulos siguientes.",
+    "crumbs": [
+      "Datos",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Análisis Exploratorio de Datos</span>"
+    ]
+  },
+  {
+    "objectID": "05-preparacion.html",
+    "href": "05-preparacion.html",
+    "title": "5  Preparación de los Datos",
+    "section": "",
+    "text": "5.1 Objetivo de la preparación\nEn este capítulo se construye un dataset analítico coherente y reproducible para los capítulos de modelado (06 y 07), a partir de steam.csv.\nLas decisiones de preparación se limitan a lo estrictamente necesario para:",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preparación de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "05-preparacion.html#objetivo-de-la-preparación",
+    "href": "05-preparacion.html#objetivo-de-la-preparación",
+    "title": "5  Preparación de los Datos",
+    "section": "",
+    "text": "garantizar consistencia (tipos, rangos y duplicados),\nreducir problemas numéricos en variables con colas largas (transformaciones log1p),\ngenerar predictores simples y trazables (p. ej., indicadores de plataforma),\npersistir un único conjunto final (data/steam_model.rds) que se reutiliza en ambos modelos.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preparación de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "05-preparacion.html#calidad-de-datos-duplicados-y-valores-faltantes",
+    "href": "05-preparacion.html#calidad-de-datos-duplicados-y-valores-faltantes",
+    "title": "5  Preparación de los Datos",
+    "section": "5.2 Calidad de datos (duplicados y valores faltantes)",
+    "text": "5.2 Calidad de datos (duplicados y valores faltantes)\n\n\nRegistros duplicados (fila completa): 0 \n\n\n\n\n\n\n\nvariable\nna\npct\n\n\n\n\npublisher\n6\n0.02\n\n\nappid\n0\n0.00\n\n\nname\n0\n0.00\n\n\nrelease_date\n0\n0.00\n\n\nenglish\n0\n0.00\n\n\ndeveloper\n0\n0.00\n\n\nplatforms\n0\n0.00\n\n\nrequired_age\n0\n0.00\n\n\ncategories\n0\n0.00\n\n\ngenres\n0\n0.00\n\n\nsteamspy_tags\n0\n0.00\n\n\nachievements\n0\n0.00\n\n\npositive_ratings\n0\n0.00\n\n\nnegative_ratings\n0\n0.00\n\n\naverage_playtime\n0\n0.00\n\n\n\n\n\nEn base al EDA, la proporción de faltantes es reducida en las variables usadas en modelado. Por simplicidad y reproducibilidad, el dataset final se filtra por completitud únicamente en el subconjunto de variables seleccionadas.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preparación de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "05-preparacion.html#tipado-y-variables-derivadas",
+    "href": "05-preparacion.html#tipado-y-variables-derivadas",
+    "title": "5  Preparación de los Datos",
+    "section": "5.3 Tipado y variables derivadas",
+    "text": "5.3 Tipado y variables derivadas\nTransformaciones aplicadas:\n\nFecha: release_date se convierte a fecha (parsing robusto) y se extrae release_year.\nPlataformas: indicadores booleanos (windows, mac, linux) derivados desde platforms (texto multietiqueta).\nMultietiqueta: recuentos n_categories, n_genres, n_tags desde separador ;.\nOwners: se parsea el rango owners (p. ej. \"20000-50000\") y se obtiene owners_low/high/mid.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preparación de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "05-preparacion.html#consideración-de-valores-extremos",
+    "href": "05-preparacion.html#consideración-de-valores-extremos",
+    "title": "5  Preparación de los Datos",
+    "section": "5.4 Consideración de valores extremos",
+    "text": "5.4 Consideración de valores extremos\nEn variables de mercado/plataforma (p. ej. positive_ratings, owners) es habitual observar distribuciones altamente asimétricas. Se realiza una detección descriptiva con regla IQR (sin eliminar observaciones automáticamente).\n\n\n\n\n\nvariable\noutliers\npct\n\n\n\n\nprice\n1975\n7.29\n\n\npositive_ratings\n4286\n15.83\n\n\nnegative_ratings\n3957\n14.61\n\n\nowners_mid\n5420\n20.02\n\n\nachievements\n1695\n6.26",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preparación de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "05-preparacion.html#transformaciones-numéricas-para-modelado",
+    "href": "05-preparacion.html#transformaciones-numéricas-para-modelado",
+    "title": "5  Preparación de los Datos",
+    "section": "5.5 Transformaciones numéricas para modelado",
+    "text": "5.5 Transformaciones numéricas para modelado\nLas variables de conteo (colas pesadas) se transforman con log1p para estabilizar escala y reducir la influencia de extremos. Estas transformaciones se usan explícitamente en los capítulos de modelado.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preparación de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "05-preparacion.html#variables-categóricas",
+    "href": "05-preparacion.html#variables-categóricas",
+    "title": "5  Preparación de los Datos",
+    "section": "5.6 Variables categóricas",
+    "text": "5.6 Variables categóricas\nEn este proyecto se prioriza un modelado interpretable. Variables categóricas de alta cardinalidad (p. ej. listas completas de géneros/tags como texto) se resumen mediante recuentos (n_genres, n_tags) en lugar de one-hot encoding, para evitar una expansión excesiva de dimensionalidad.\nLos indicadores windows/mac/linux se obtienen a partir de platforms mediante reglas de presencia/ausencia (derivación reproducible y trazable).",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preparación de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "05-preparacion.html#dataset-final-para-modelado",
+    "href": "05-preparacion.html#dataset-final-para-modelado",
+    "title": "5  Preparación de los Datos",
+    "section": "5.7 Dataset final para modelado",
+    "text": "5.7 Dataset final para modelado\nSe construye el conjunto final steam_model, que alimentará:\n\nRegresión lineal (Cap. 6): log_pos_ratings.\nRegresión logística (Cap. 7): popular definido como top 10% por positive_ratings.\n\n\n\n           n  pct_popular \n2.707500e+04 1.000185e-01 \n\n\nLa variable popular se define como una categorización operativa (top 10% por positive_ratings) para abordar la pregunta de negocio de clasificación. Esta definición no es una “verdad” externa, sino un criterio reproducible dentro del dataset que permite evaluar la capacidad predictiva a partir de atributos de catálogo.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preparación de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "05-preparacion.html#persistencia-del-dataset-preparado",
+    "href": "05-preparacion.html#persistencia-del-dataset-preparado",
+    "title": "5  Preparación de los Datos",
+    "section": "5.8 Persistencia del dataset preparado",
+    "text": "5.8 Persistencia del dataset preparado\n\n\nMostrar código\nsaveRDS(steam_model, file.path(\"data\", \"steam_model.rds\"))\n\n# Export opcional a CSV\nif (requireNamespace(\"readr\", quietly = TRUE)) {\n  readr::write_csv(steam_model, file.path(\"data\", \"steam_model.csv\"))\n} else {\n  write.csv(steam_model, file.path(\"data\", \"steam_model.csv\"), row.names = FALSE)\n}",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preparación de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "05-preparacion.html#conclusión",
+    "href": "05-preparacion.html#conclusión",
+    "title": "5  Preparación de los Datos",
+    "section": "5.9 Conclusión",
+    "text": "5.9 Conclusión\nEn esta etapa se ha construido un conjunto de datos de modelado (steam_model) consistente y reproducible a partir del dataset original de Steam. Dado lo observado en el EDA, la presencia de valores faltantes relevantes es marginal; por ello se ha optado por un criterio conservador de filtrado únicamente en las variables necesarias para los modelos, evitando imputaciones que podrían introducir sesgo.\nSe han generado predictores derivados con sentido de negocio y estadístico (p. ej., recuentos de géneros/categorías/etiquetas y la derivación de indicadores de plataforma a partir de platforms) y se han aplicado transformaciones logarítmicas (log1p) a variables con colas largas para mejorar la estabilidad numérica y la interpretabilidad de los modelos.\nFinalmente, se han definido explícitamente los objetivos para las tareas posteriores: - Un objetivo continuo (log_pos_ratings) para analizar factores asociados a mayor popularidad en términos de valoraciones positivas (Cap. 6). - Un objetivo binario (popular, definido operativamente como top 10% por valoraciones positivas) para un problema de clasificación orientado a predicción (Cap. 7).\nEl dataset preparado se guarda en disco para asegurar trazabilidad y reproducibilidad, y constituye la base común para los capítulos de modelado.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Preparación de los Datos</span>"
+    ]
+  },
+  {
+    "objectID": "06-regresion-lineal.html",
+    "href": "06-regresion-lineal.html",
+    "title": "6  Modelo de Regresión Lineal Múltiple",
+    "section": "",
+    "text": "6.1 Justificación del modelo\nSe ajusta una regresión lineal múltiple como línea base interpretable para explicar variaciones en la popularidad (proxy) a partir de atributos de catálogo.\nLa variable dependiente se define como:\n\\[\ny = log(1 + positive\\_ratings)\n\\]\nEste modelo responde directamente a: “¿qué variables del catálogo se asocian con más valoraciones positivas?”. Se utiliza log(1 + positive_ratings) para reducir asimetría (colas largas) y obtener un ajuste más estable. No se incluyen como predictores variables derivadas del propio objetivo para evitar leakage.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Modelo de Regresión Lineal Múltiple</span>"
+    ]
+  },
+  {
+    "objectID": "06-regresion-lineal.html#partición-entrenamiento-test",
+    "href": "06-regresion-lineal.html#partición-entrenamiento-test",
+    "title": "6  Modelo de Regresión Lineal Múltiple",
+    "section": "6.2 Partición entrenamiento / test",
+    "text": "6.2 Partición entrenamiento / test\n\n\nMostrar código\nset.seed(123)\nn &lt;- nrow(steam_model)\nidx &lt;- sample.int(n, size = floor(0.8 * n))\n\ntrain &lt;- steam_model[idx, ]\ntest  &lt;- steam_model[-idx, ]\n\n# Centrado del año usando solo entrenamiento (evita leakage)\ncenter_year &lt;- mean(train$release_year, na.rm = TRUE)\ntrain &lt;- train %&gt;% mutate(release_year_c = release_year - center_year)\ntest  &lt;- test  %&gt;% mutate(release_year_c = release_year - center_year)\n\nc(n_train = nrow(train), n_test = nrow(test))\n\n\nn_train  n_test \n  21660    5415",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Modelo de Regresión Lineal Múltiple</span>"
+    ]
+  },
+  {
+    "objectID": "06-regresion-lineal.html#formulación-de-modelos",
+    "href": "06-regresion-lineal.html#formulación-de-modelos",
+    "title": "6  Modelo de Regresión Lineal Múltiple",
+    "section": "6.3 Formulación de modelos",
+    "text": "6.3 Formulación de modelos\nSe comparan tres especificaciones:\n\nBaseline: predicción constante (media de y en entrenamiento).\nModelo simple (núcleo): variables cuantitativas principales.\nModelo completo: añade plataformas y recuentos de metadatos.\n\n\n\nMostrar código\n# Baseline\nyhat_base &lt;- rep(mean(train$log_pos_ratings), nrow(test))\n\n# Modelo simple (núcleo)\nlm_simple &lt;- lm(\n  log_pos_ratings ~ log_price + log_achievements + required_age + english + release_year_c,\n  data = train\n)\n\n# Modelo completo\nlm_full &lt;- lm(\n  log_pos_ratings ~ log_price + log_achievements + required_age + english + release_year_c +\n    windows + mac + linux + n_categories + n_genres + n_tags,\n  data = train\n)\n\n# Comparativa \"transformación\" (raw vs log para price/achievements)\nlm_raw &lt;- lm(\n  log_pos_ratings ~ price + achievements + required_age + english + release_year_c +\n    windows + mac + linux + n_categories + n_genres + n_tags,\n  data = train\n)\n\nsummary(lm_full)\n\n\n\nCall:\nlm(formula = log_pos_ratings ~ log_price + log_achievements + \n    required_age + english + release_year_c + windows + mac + \n    linux + n_categories + n_genres + n_tags, data = train)\n\nResiduals:\n    Min      1Q  Median      3Q     Max \n-5.4757 -1.1606 -0.1649  0.9722  9.3466 \n\nCoefficients:\n                  Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept)       0.072859   0.846467   0.086 0.931408    \nlog_price         0.125237   0.013725   9.125  &lt; 2e-16 ***\nlog_achievements  0.158959   0.007717  20.599  &lt; 2e-16 ***\nrequired_age      0.110749   0.004727  23.430  &lt; 2e-16 ***\nenglish1         -0.818399   0.085959  -9.521  &lt; 2e-16 ***\nrelease_year_c   -0.392801   0.005573 -70.482  &lt; 2e-16 ***\nwindowsTRUE       0.345326   0.839388   0.411 0.680782    \nmacTRUE           0.297373   0.032172   9.243  &lt; 2e-16 ***\nlinuxTRUE         0.140017   0.037342   3.750 0.000178 ***\nn_categories      0.211588   0.006115  34.601  &lt; 2e-16 ***\nn_genres         -0.003331   0.009461  -0.352 0.724787    \nn_tags            0.914528   0.032364  28.258  &lt; 2e-16 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 1.677 on 21648 degrees of freedom\nMultiple R-squared:  0.3824,    Adjusted R-squared:  0.3821 \nF-statistic:  1219 on 11 and 21648 DF,  p-value: &lt; 2.2e-16",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Modelo de Regresión Lineal Múltiple</span>"
+    ]
+  },
+  {
+    "objectID": "06-regresion-lineal.html#evaluación-predictiva-test",
+    "href": "06-regresion-lineal.html#evaluación-predictiva-test",
+    "title": "6  Modelo de Regresión Lineal Múltiple",
+    "section": "6.4 Evaluación predictiva (test)",
+    "text": "6.4 Evaluación predictiva (test)\n\n\nMostrar código\npred_simple &lt;- predict(lm_simple, newdata = test)\npred_full   &lt;- predict(lm_full,   newdata = test)\npred_raw    &lt;- predict(lm_raw,    newdata = test)\n\nmetrics_test &lt;- rbind(\n  baseline = c(RMSE = rmse(test$log_pos_ratings, yhat_base),\n               MAE  = mae(test$log_pos_ratings,  yhat_base),\n               R2   = r2(test$log_pos_ratings,   yhat_base)),\n  simple = c(RMSE = rmse(test$log_pos_ratings, pred_simple),\n             MAE  = mae(test$log_pos_ratings,  pred_simple),\n             R2   = r2(test$log_pos_ratings,   pred_simple)),\n  full = c(RMSE = rmse(test$log_pos_ratings, pred_full),\n           MAE  = mae(test$log_pos_ratings,  pred_full),\n           R2   = r2(test$log_pos_ratings,   pred_full)),\n  raw = c(RMSE = rmse(test$log_pos_ratings, pred_raw),\n          MAE  = mae(test$log_pos_ratings,  pred_raw),\n          R2   = r2(test$log_pos_ratings,   pred_raw))\n)\n\nknitr::kable(round(metrics_test, 4))\n\n\n\n\n\n\nRMSE\nMAE\nR2\n\n\n\n\nbaseline\n2.1610\n1.7132\n0.0000\n\n\nsimple\n1.8007\n1.3977\n0.3057\n\n\nfull\n1.7071\n1.3266\n0.3759\n\n\nraw\n1.7120\n1.3224\n0.3723\n\n\n\n\n\nEn el conjunto de test, el modelo baseline (media) representa la referencia mínima: su R² es 0, lo que indica ausencia total de capacidad explicativa.\nLos modelos ajustados mejoran claramente esta referencia:\n\nEl modelo simple alcanza un R² ≈ 0.31, reduciendo el error respecto al baseline.\nEl modelo full logra el mejor desempeño, con R² ≈ 0.38 y el menor RMSE.\n\nEsto implica que aproximadamente un 38% de la variabilidad en la puntuación del juego puede explicarse mediante las variables incluidas (precio, tags, géneros, plataformas, etc.).\nAunque el poder predictivo es moderado, el modelo proporciona una base útil para estimar tendencias generales de valoración.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Modelo de Regresión Lineal Múltiple</span>"
+    ]
+  },
+  {
+    "objectID": "06-regresion-lineal.html#resumen-del-ajuste-entrenamiento",
+    "href": "06-regresion-lineal.html#resumen-del-ajuste-entrenamiento",
+    "title": "6  Modelo de Regresión Lineal Múltiple",
+    "section": "6.5 Resumen del ajuste (entrenamiento)",
+    "text": "6.5 Resumen del ajuste (entrenamiento)\nSe reportan R² ajustado y el error estándar residual \\((\\hat\\sigma)\\) en entrenamiento.\n\n\nMostrar código\nsumm_tbl &lt;- rbind(\n  simple = c(R2_adj = summary(lm_simple)$adj.r.squared, sigma = summary(lm_simple)$sigma),\n  full   = c(R2_adj = summary(lm_full)$adj.r.squared,   sigma = summary(lm_full)$sigma),\n  raw    = c(R2_adj = summary(lm_raw)$adj.r.squared,    sigma = summary(lm_raw)$sigma)\n)\n\nknitr::kable(round(summ_tbl, 5))\n\n\n\n\n\n\nR2_adj\nsigma\n\n\n\n\nsimple\n0.30383\n1.78052\n\n\nfull\n0.38212\n1.67743\n\n\nraw\n0.39349\n1.66192\n\n\n\n\n\nLos valores de R² ajustado son consistentes con la evaluación en test:\n\nEl modelo simple explica alrededor del 30% de la variabilidad.\nEl modelo full mejora hasta aproximadamente un 38%.\nEl modelo raw no aporta una mejora sustancial adicional.\n\nEsto sugiere que añadir demasiadas variables sin una estructura clara no siempre incrementa la capacidad explicativa, y que el modelo full representa un buen equilibrio entre complejidad y rendimiento.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Modelo de Regresión Lineal Múltiple</span>"
+    ]
+  },
+  {
+    "objectID": "06-regresion-lineal.html#interpretación-de-coeficientes-modelo-seleccionado",
+    "href": "06-regresion-lineal.html#interpretación-de-coeficientes-modelo-seleccionado",
+    "title": "6  Modelo de Regresión Lineal Múltiple",
+    "section": "6.6 Interpretación de coeficientes (modelo seleccionado)",
+    "text": "6.6 Interpretación de coeficientes (modelo seleccionado)\nEn escala log(1+y), un coeficiente \\(\\beta\\) implica un factor multiplicativo aproximado \\(e^{\\beta}\\) sobre \\((1+positive\\_ratings)\\), manteniendo constantes el resto de variables.\n\n\nMostrar código\nlm_fit &lt;- lm_full  # modelo a reportar por defecto\n\nci &lt;- confint(lm_fit)\n\ncoef_tbl &lt;- data.frame(\n  term = names(coef(lm_fit)),\n  estimate = as.numeric(coef(lm_fit)),\n  conf_low = ci[, 1],\n  conf_high = ci[, 2],\n  row.names = NULL\n) %&gt;%\n  dplyr::filter(term != \"(Intercept)\") %&gt;%\n  mutate(\n    mult = exp(estimate),\n    mult_low = exp(conf_low),\n    mult_high = exp(conf_high),\n    approx_pct = 100 * (mult - 1)\n  )\n\nknitr::kable(coef_tbl, digits = 4)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nterm\nestimate\nconf_low\nconf_high\nmult\nmult_low\nmult_high\napprox_pct\n\n\n\n\nlog_price\n0.1252\n0.0983\n0.1521\n1.1334\n1.1033\n1.1643\n13.3417\n\n\nlog_achievements\n0.1590\n0.1438\n0.1741\n1.1723\n1.1547\n1.1902\n17.2290\n\n\nrequired_age\n0.1107\n0.1015\n0.1200\n1.1171\n1.1068\n1.1275\n11.7115\n\n\nenglish1\n-0.8184\n-0.9869\n-0.6499\n0.4411\n0.3727\n0.5221\n-55.8863\n\n\nrelease_year_c\n-0.3928\n-0.4037\n-0.3819\n0.6752\n0.6678\n0.6826\n-32.4837\n\n\nwindowsTRUE\n0.3453\n-1.2999\n1.9906\n1.4124\n0.2725\n7.3198\n41.2450\n\n\nmacTRUE\n0.2974\n0.2343\n0.3604\n1.3463\n1.2640\n1.4339\n34.6317\n\n\nlinuxTRUE\n0.1400\n0.0668\n0.2132\n1.1503\n1.0691\n1.2376\n15.0293\n\n\nn_categories\n0.2116\n0.1996\n0.2236\n1.2356\n1.2209\n1.2505\n23.5638\n\n\nn_genres\n-0.0033\n-0.0219\n0.0152\n0.9967\n0.9784\n1.0153\n-0.3325\n\n\nn_tags\n0.9145\n0.8511\n0.9780\n2.4956\n2.3422\n2.6590\n149.5598\n\n\n\n\n\nEn esta especificación, la columna mult = exp(β) representa el factor multiplicativo sobre el objetivo ante un incremento unitario del predictor (manteniendo constantes el resto), y approx_pct aproxima ese efecto en porcentaje.\nResultados principales. Se observa que n_tags es el predictor con mayor asociación: mult = 2.4956 implica un aumento aproximado del +149.6% en el objetivo por cada unidad adicional en n_tags (IC95% del multiplicador: 2.34–2.66). También presentan efectos positivos relevantes n_categories (+23.6%), log_achievements (+17.2%), linuxTRUE (+15.0%) y log_price (+13.3%), todos con intervalos relativamente estrechos (mayor estabilidad).\nEfectos negativos. english1 muestra un efecto negativo notable (mult = 0.441), lo que se interpreta como una reducción aproximada del −55.9% respecto a la categoría de referencia. Asimismo, release_year_c presenta mult = 0.675 (−32.5%), sugiriendo que —según esté centrada/definida esta variable— el año de lanzamiento se asocia a una disminución del objetivo en la escala del modelo.\nEfectos débiles o cercanos a nulos. n_genres aparece prácticamente neutro (mult ≈ 0.997, ~−0.3%), lo que indica una contribución marginal una vez controlados el resto de factores.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Modelo de Regresión Lineal Múltiple</span>"
+    ]
+  },
+  {
+    "objectID": "06-regresion-lineal.html#evaluación-de-supuestos",
+    "href": "06-regresion-lineal.html#evaluación-de-supuestos",
+    "title": "6  Modelo de Regresión Lineal Múltiple",
+    "section": "6.7 Evaluación de supuestos",
+    "text": "6.7 Evaluación de supuestos\nLos diagnósticos (residuos, BP, VIF) se interpretan como comprobaciones de estabilidad e inferencia. En datasets grandes es frecuente detectar desviaciones significativas; por ello, el foco principal es consistencia del patrón y ausencia de colinealidad severa.\n\n6.7.1 Residuos vs ajustados y Q-Q plot\n\n\nMostrar código\ndiag_df &lt;- data.frame(\n  fitted = fitted(lm_fit),\n  resid  = residuals(lm_fit),\n  std_resid = rstandard(lm_fit)\n)\n\np1 &lt;- ggplot(diag_df, aes(x = fitted, y = resid)) +\n  geom_point(alpha = 0.15,\n           size = 1.2,\n           color = \"#2C7FB8\") +\n  geom_hline(yintercept = 0,\n           linetype = \"dashed\",\n           color = \"red\") +\n  labs(x = \"Valores ajustados\", y = \"Residuos\", title = \"Residuos vs ajustados\")\n\np2 &lt;- ggplot(diag_df, aes(sample = std_resid)) +\n  stat_qq(alpha = 0.25,\n        color = \"#2C7FB8\") +\n  stat_qq_line(color = \"red\",\n             linetype = \"dashed\") +\n  labs(x = \"Cuantiles teóricos\", y = \"Cuantiles muestrales\", title = \"Normal Q-Q (residuos estandarizados)\")\n\np1\n\n\n\n\n\n\n\n\n\nMostrar código\np2\n\n\n\n\n\n\n\n\n\nEl gráfico de residuos frente a valores ajustados muestra una dispersión amplia, con cierta estructura en bandas, lo cual es esperable dado que la variable objetivo presenta valores discretizados.\nEl Q–Q plot evidencia desviaciones en las colas, indicando que los residuos no siguen perfectamente una distribución normal.\nEsto no invalida el modelo como herramienta predictiva, pero sí sugiere que:\n\nla inferencia clásica (p-values, intervalos exactos) debe interpretarse con cautela,\npodrían explorarse modelos más flexibles o transformaciones adicionales si se buscara mayor ajuste estadístico.\n\n\n\n6.7.2 Homocedasticidad (Breusch–Pagan)\n\n\nMostrar código\n# Breusch–Pagan (homocedasticidad)\nbp &lt;- if (requireNamespace(\"lmtest\", quietly = TRUE)) {\n  lmtest::bptest(lm_fit)\n} else {\n  NULL\n}\n\nbp_tbl &lt;- if (!is.null(bp) && requireNamespace(\"broom\", quietly = TRUE)) {\n  broom::tidy(bp)\n} else if (!is.null(bp)) {\n  data.frame(\n    statistic = unname(bp$statistic),\n    parameter = unname(bp$parameter),\n    p.value = bp$p.value,\n    method = bp$method,\n    row.names = NULL\n  )\n} else {\n  bp_test_manual(lm_fit)\n}\n\nknitr::kable(bp_tbl, digits = 5)\n\n\n\n\n\nstatistic\np.value\nparameter\nmethod\n\n\n\n\n684.4263\n0\n11\nstudentized Breusch-Pagan test\n\n\n\n\n\nEl test de Breusch–Pagan arroja un p-valor prácticamente nulo, lo que indica evidencia estadística de heterocedasticidad.\nEsto significa que la varianza del error no es constante: el modelo comete errores de distinta magnitud según el nivel de predicción.\nEn un contexto de negocio, esto sugiere que el modelo es menos preciso para ciertos tipos de juegos (por ejemplo, títulos extremos en popularidad o precio).\nComo medida correctiva, podrían emplearse errores robustos o modelos no lineales, aunque para este trabajo se considera aceptable dado el objetivo exploratorio.\n\n\n6.7.3 Multicolinealidad (VIF)\n\n\nMostrar código\nvif_tbl &lt;- if (requireNamespace(\"car\", quietly = TRUE)) {\n  v &lt;- car::vif(lm_fit)\n  data.frame(term = names(v), VIF = as.numeric(v)) %&gt;% arrange(desc(VIF))\n} else {\n  vif_manual(lm_fit)\n}\n\nknitr::kable(vif_tbl, digits = 3)\n\n\n\n\n\nterm\nVIF\n\n\n\n\nlinux\n1.675\n\n\nmac\n1.664\n\n\nn_categories\n1.445\n\n\nlog_achievements\n1.387\n\n\nn_genres\n1.218\n\n\nn_tags\n1.172\n\n\nrelease_year_c\n1.111\n\n\nlog_price\n1.097\n\n\nrequired_age\n1.022\n\n\nenglish\n1.018\n\n\nwindows\n1.001\n\n\n\n\n\nLos valores de VIF observados se sitúan todos por debajo de 2, muy lejos del umbral habitual de preocupación (VIF &gt; 5).\nEsto indica que no existe multicolinealidad problemática entre las variables explicativas, y que los coeficientes estimados son relativamente estables e interpretables.\nPor tanto, el modelo puede incorporar simultáneamente variables como precio, número de géneros o plataformas sin riesgo significativo de redundancia lineal.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Modelo de Regresión Lineal Múltiple</span>"
+    ]
+  },
+  {
+    "objectID": "06-regresion-lineal.html#conclusión",
+    "href": "06-regresion-lineal.html#conclusión",
+    "title": "6  Modelo de Regresión Lineal Múltiple",
+    "section": "6.8 Conclusión",
+    "text": "6.8 Conclusión\nEl modelo de regresión lineal permite cuantificar la relación entre características del videojuego (precio, contenido, plataformas) y su puntuación final.\nLos resultados muestran que:\n\nel modelo mejora claramente frente al baseline,\nexplica alrededor del 38% de la variabilidad,\nno presenta problemas de colinealidad,\naunque sí evidencia heterocedasticidad y desviaciones de normalidad.\n\nEn términos de negocio, este modelo constituye una primera aproximación útil para identificar qué atributos están asociados con mejores valoraciones, aunque su capacidad predictiva es moderada y podría complementarse con enfoques más complejos.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Modelo de Regresión Lineal Múltiple</span>"
+    ]
+  },
+  {
+    "objectID": "07-regresion-logistica.html",
+    "href": "07-regresion-logistica.html",
+    "title": "7  Modelo de Regresión Logística",
+    "section": "",
+    "text": "7.1 Justificación del modelo\nSe plantea una regresión logística para estimar la probabilidad de que un juego sea popular (variable binaria popular definida en la preparación) a partir de atributos de catálogo.\nNota metodológica (evitar leakage): popular se construye usando positive_ratings. Por tanto, no se utiliza positive_ratings ni derivadas directas como predictor.\nEste capítulo responde a: “¿es posible predecir si un juego será altamente popular a partir de sus características?”. Dado que popular es top 10%, el problema es desbalanceado; por ello se complementa la exactitud con AUC y F1.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Modelo de Regresión Logística</span>"
+    ]
+  },
+  {
+    "objectID": "07-regresion-logistica.html#distribución-del-objetivo",
+    "href": "07-regresion-logistica.html#distribución-del-objetivo",
+    "title": "7  Modelo de Regresión Logística",
+    "section": "7.2 Distribución del objetivo",
+    "text": "7.2 Distribución del objetivo\n\n\nMostrar código\nprop.table(table(steam_model$popular))\n\n\n\n    FALSE      TRUE \n0.8999815 0.1000185 \n\n\n\n\nMostrar código\nggplot(steam_model, aes(x = popular)) +\n  geom_bar(fill = \"#1f77b4\") +\n  labs(x = \"Popular (top 10%)\", y = \"Número de juegos\", title = \"Distribución del objetivo\")",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Modelo de Regresión Logística</span>"
+    ]
+  },
+  {
+    "objectID": "07-regresion-logistica.html#partición-entrenamiento-test",
+    "href": "07-regresion-logistica.html#partición-entrenamiento-test",
+    "title": "7  Modelo de Regresión Logística",
+    "section": "7.3 Partición entrenamiento / test",
+    "text": "7.3 Partición entrenamiento / test\n\n\nMostrar código\nset.seed(123)\nn &lt;- nrow(steam_model)\nidx &lt;- sample.int(n, size = floor(0.8 * n))\n\ntrain &lt;- steam_model[idx, ]\ntest  &lt;- steam_model[-idx, ]\n\n# Centrado del año en entrenamiento\ncenter_year &lt;- mean(train$release_year, na.rm = TRUE)\ntrain &lt;- train %&gt;% mutate(release_year_c = release_year - center_year)\ntest  &lt;- test  %&gt;% mutate(release_year_c = release_year - center_year)\n\nc(n_train = nrow(train), n_test = nrow(test))\n\n\nn_train  n_test \n  21660    5415",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Modelo de Regresión Logística</span>"
+    ]
+  },
+  {
+    "objectID": "07-regresion-logistica.html#formulación-y-ajuste-del-modelo",
+    "href": "07-regresion-logistica.html#formulación-y-ajuste-del-modelo",
+    "title": "7  Modelo de Regresión Logística",
+    "section": "7.4 Formulación y ajuste del modelo",
+    "text": "7.4 Formulación y ajuste del modelo\nSe comparan dos especificaciones:\n\nModelo simple (núcleo): precio, logros, edad requerida, idioma, año.\nModelo completo: añade plataformas y recuentos de metadatos.\n\n\n\nMostrar código\nglm_simple &lt;- glm(\n  popular ~ log_price + log_achievements + required_age + english + release_year_c,\n  data = train,\n  family = binomial()\n)\n\nglm_full &lt;- glm(\n  popular ~ log_price + log_achievements + required_age + english + release_year_c +\n    windows + mac + linux + n_categories + n_genres + n_tags,\n  data = train,\n  family = binomial()\n)\n\nsummary(glm_full)\n\n\n\nCall:\nglm(formula = popular ~ log_price + log_achievements + required_age + \n    english + release_year_c + windows + mac + linux + n_categories + \n    n_genres + n_tags, family = binomial(), data = train)\n\nCoefficients:\n                   Estimate Std. Error z value Pr(&gt;|z|)    \n(Intercept)      -28.127218 138.896783  -0.203   0.8395    \nlog_price          0.357097   0.032454  11.003  &lt; 2e-16 ***\nlog_achievements   0.171420   0.017817   9.621  &lt; 2e-16 ***\nrequired_age       0.114864   0.006888  16.676  &lt; 2e-16 ***\nenglish1          -0.312817   0.306093  -1.022   0.3068    \nrelease_year_c    -0.362262   0.010510 -34.469  &lt; 2e-16 ***\nwindowsTRUE        9.449147 138.864100   0.068   0.9457    \nmacTRUE            0.329463   0.068745   4.793 1.65e-06 ***\nlinuxTRUE          0.150303   0.073956   2.032   0.0421 *  \nn_categories       0.228583   0.011274  20.274  &lt; 2e-16 ***\nn_genres           0.030959   0.021481   1.441   0.1495    \nn_tags             4.781922   0.999930   4.782 1.73e-06 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 14144  on 21659  degrees of freedom\nResidual deviance: 10521  on 21648  degrees of freedom\nAIC: 10545\n\nNumber of Fisher Scoring iterations: 11",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Modelo de Regresión Logística</span>"
+    ]
+  },
+  {
+    "objectID": "07-regresion-logistica.html#bondad-de-ajuste-aic-y-test-hl",
+    "href": "07-regresion-logistica.html#bondad-de-ajuste-aic-y-test-hl",
+    "title": "7  Modelo de Regresión Logística",
+    "section": "7.5 Bondad de ajuste (AIC) y test HL",
+    "text": "7.5 Bondad de ajuste (AIC) y test HL\n\n\nMostrar código\ngof &lt;- data.frame(\n  modelo = c(\"simple\", \"completo\"),\n  AIC = c(AIC(glm_simple), AIC(glm_full))\n)\n\nknitr::kable(gof, digits = 2)\n\n\n\n\n\nmodelo\nAIC\n\n\n\n\nsimple\n11397.04\n\n\ncompleto\n10545.11\n\n\n\n\n\nMostrar código\n# Hosmer-Lemeshow\nif (requireNamespace(\"ResourceSelection\", quietly = TRUE)) {\n  hl &lt;- ResourceSelection::hoslem.test(train$popular, fitted(glm_full), g = 10)\n  hl_tbl &lt;- data.frame(\n    estadistico = unname(hl$statistic),\n    gl = unname(hl$parameter),\n    p_value = hl$p.value\n  )\n  knitr::kable(hl_tbl, digits = 5)\n} else {\n  cat(\"Paquete 'ResourceSelection' no instalado: se omite Hosmer-Lemeshow.\\n\")\n}\n\n\n\n\n\nestadistico\ngl\np_value\n\n\n\n\n6.92929\n8\n0.54428\n\n\n\n\n\nEl criterio AIC permite comparar modelos logísticos penalizando la complejidad: un valor menor indica un mejor equilibrio entre ajuste y parsimonia.\nEn este caso, el modelo completo presenta un AIC inferior al modelo simple (10545 frente a 11397), lo que sugiere que incorporar más variables explicativas mejora la capacidad del modelo para describir la probabilidad de que un juego sea popular.\nPor otro lado, el test de Hosmer–Lemeshow evalúa si las probabilidades predichas se calibran adecuadamente con los datos observados. El resultado obtenido (p-value = 0.54) indica que no hay evidencia estadística de mal ajuste, por lo que el modelo completo presenta una calibración global razonable.\nEn conjunto, estos indicadores respaldan el uso del modelo completo como la especificación más adecuada para el análisis predictivo.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Modelo de Regresión Logística</span>"
+    ]
+  },
+  {
+    "objectID": "07-regresion-logistica.html#interpretación-odds-ratios",
+    "href": "07-regresion-logistica.html#interpretación-odds-ratios",
+    "title": "7  Modelo de Regresión Logística",
+    "section": "7.6 Interpretación (odds ratios)",
+    "text": "7.6 Interpretación (odds ratios)\nSe reportan odds ratios (OR): (=e^{}). Un OR &gt; 1 indica aumento en las odds de ser popular manteniendo el resto constante.\n\n\nMostrar código\n# Odds Ratios (OR) e IC 95% a partir de los coeficientes (log-odds).\n# Se fuerza el tipo numérico para evitar problemas de clase al exponenciar.\ncoefs_or &lt;- broom::tidy(glm_full, conf.int = TRUE) |&gt;\n  dplyr::mutate(\n    estimate  = suppressWarnings(as.numeric(estimate)),\n    conf.low  = suppressWarnings(as.numeric(conf.low)),\n    conf.high = suppressWarnings(as.numeric(conf.high))\n  ) |&gt;\n  dplyr::filter(term != \"(Intercept)\") |&gt;\n  dplyr::transmute(\n    Variable = term,\n    OR = exp(estimate),\n    CI_95_inf = exp(conf.low),\n    CI_95_sup = exp(conf.high),\n    `p-valor` = p.value\n  ) |&gt;\n  dplyr::arrange(dplyr::desc(OR))\n\nknitr::kable(\n  coefs_or, digits = 3,\n  caption = \"Odds Ratios (OR) e intervalo de confianza del 95% (modelo logístico)\"\n)\n\n\n\nOdds Ratios (OR) e intervalo de confianza del 95% (modelo logístico)\n\n\nVariable\nOR\nCI_95_inf\nCI_95_sup\np-valor\n\n\n\n\nwindowsTRUE\n12697.331\n2.168667e+59\n1.074543e+70\n0.946\n\n\nn_tags\n119.334\n2.713800e+01\n2.092348e+03\n0.000\n\n\nlog_price\n1.429\n1.341000e+00\n1.523000e+00\n0.000\n\n\nmacTRUE\n1.390\n1.214000e+00\n1.590000e+00\n0.000\n\n\nn_categories\n1.257\n1.229000e+00\n1.285000e+00\n0.000\n\n\nlog_achievements\n1.187\n1.146000e+00\n1.229000e+00\n0.000\n\n\nlinuxTRUE\n1.162\n1.005000e+00\n1.344000e+00\n0.042\n\n\nrequired_age\n1.122\n1.107000e+00\n1.137000e+00\n0.000\n\n\nn_genres\n1.031\n9.890000e-01\n1.076000e+00\n0.150\n\n\nenglish1\n0.731\n4.190000e-01\n1.406000e+00\n0.307\n\n\nrelease_year_c\n0.696\n6.820000e-01\n7.110000e-01\n0.000\n\n\n\n\n\nLos odds ratios (OR) permiten cuantificar el efecto de cada variable sobre la probabilidad de que un juego pertenezca al grupo de alta popularidad, manteniendo constantes el resto de factores.\nEn los resultados observamos que:\n\nNúmero de tags (n_tags) presenta un OR muy elevado (&gt; 100), lo que sugiere que los juegos con mayor riqueza descriptiva y categorización tienden a ser mucho más propensos a alcanzar popularidad.\nPrecio (log_price) tiene un OR &gt; 1 (≈ 1.43), indicando que, dentro del rango observado, precios más altos se asocian con una mayor probabilidad de popularidad, posiblemente porque reflejan productos de mayor presupuesto o valor percibido.\nVariables como mac o linux muestran efectos positivos moderados (OR entre 1.1 y 1.4), lo que podría interpretarse como una ventaja asociada a una mayor compatibilidad multiplataforma.\nEn cambio, la variable english no resulta significativa (p &gt; 0.05), lo que indica que el idioma, en este dataset, no discrimina claramente entre juegos populares y no populares.\n\nEstos resultados son coherentes con la lógica de negocio: la popularidad parece estar impulsada principalmente por factores de visibilidad, contenido y posicionamiento del producto más que por características técnicas menores.\nCabe destacar que algunas variables binarias como windowsTRUE presentan intervalos extremadamente amplios, lo que sugiere inestabilidad en la estimación debido a baja variabilidad o desequilibrio en la muestra. Por ello, su interpretación debe hacerse con cautela.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Modelo de Regresión Logística</span>"
+    ]
+  },
+  {
+    "objectID": "07-regresion-logistica.html#evaluación-predictiva-test",
+    "href": "07-regresion-logistica.html#evaluación-predictiva-test",
+    "title": "7  Modelo de Regresión Logística",
+    "section": "7.7 Evaluación predictiva (test)",
+    "text": "7.7 Evaluación predictiva (test)\n\n\nMostrar código\np_simple &lt;- predict(glm_simple, newdata = test, type = \"response\")\np_full   &lt;- predict(glm_full,   newdata = test, type = \"response\")\n\nmetrics &lt;- rbind(\n  simple = c(\n    ACC = acc(test$popular, p_simple),\n    Precision = precision(test$popular, p_simple),\n    Recall = recall(test$popular, p_simple),\n    F1 = f1(test$popular, p_simple)\n  ),\n  full = c(\n    ACC = acc(test$popular, p_full),\n    Precision = precision(test$popular, p_full),\n    Recall = recall(test$popular, p_full),\n    F1 = f1(test$popular, p_full)\n  )\n)\n\n# AUC\nauc_s &lt;- if (requireNamespace(\"pROC\", quietly = TRUE)) {\n  as.numeric(pROC::auc(pROC::roc(test$popular, p_simple, quiet = TRUE)))\n} else auc_manual(test$popular, p_simple)\n\nauc_f &lt;- if (requireNamespace(\"pROC\", quietly = TRUE)) {\n  as.numeric(pROC::auc(pROC::roc(test$popular, p_full, quiet = TRUE)))\n} else auc_manual(test$popular, p_full)\n\nmetrics &lt;- cbind(metrics, AUC = c(simple = auc_s, full = auc_f))\n\nknitr::kable(round(metrics, 4))\n\n\n\n\n\n\nACC\nPrecision\nRecall\nF1\nAUC\n\n\n\n\nsimple\n0.9069\n0.6017\n0.1345\n0.2198\n0.7971\n\n\nfull\n0.9104\n0.6443\n0.1818\n0.2836\n0.8393\n\n\n\n\n\nPara evaluar la capacidad de generalización, se reportan métricas sobre el conjunto de test.\nLos resultados muestran:\n\nUna accuracy elevada (~0.91), esperable dado el fuerte desbalance de clases (solo ~10% son populares).\nEl modelo completo mejora ligeramente al simple en términos de F1 (0.28 frente a 0.22), indicando mejor equilibrio entre precisión y sensibilidad.\nEl AUC alcanza 0.84, lo que refleja una buena capacidad discriminativa: el modelo distingue razonablemente entre juegos populares y no populares.\n\nSin embargo, el recall sigue siendo relativamente bajo (&lt; 0.20), lo que implica que el modelo detecta solo una parte de los juegos realmente populares. Esto es consistente con el carácter minoritario de la clase positiva.\nEn términos de negocio, el modelo es útil como herramienta de priorización (ranking de probabilidad), aunque el umbral de decisión debería ajustarse según el coste de falsos negativos.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Modelo de Regresión Logística</span>"
+    ]
+  },
+  {
+    "objectID": "07-regresion-logistica.html#curva-roc-modelo-completo",
+    "href": "07-regresion-logistica.html#curva-roc-modelo-completo",
+    "title": "7  Modelo de Regresión Logística",
+    "section": "7.8 Curva ROC (modelo completo)",
+    "text": "7.8 Curva ROC (modelo completo)\n\n\nMostrar código\nif (requireNamespace(\"pROC\", quietly = TRUE)) {\n  roc_obj &lt;- pROC::roc(test$popular, p_full, quiet = TRUE)\n\n  plot(\n    roc_obj,\n    main = \"ROC (modelo completo)\",\n    col = \"#1f77b4\",       # azul\n    lwd = 3,\n    legacy.axes = TRUE,    # ejes estándar: x=FPR, y=TPR\n    print.auc = TRUE,      # muestra AUC\n    auc.polygon = TRUE,\n    auc.polygon.col = adjustcolor(\"#1f77b4\", alpha.f = 0.15),\n    grid = TRUE\n  )\n  abline(a = 0, b = 1, lty = 2, col = \"grey50\", lwd = 2)\n} else {\n  # ROC manual\n  ord &lt;- order(p_full, decreasing = TRUE)\n  y &lt;- test$popular[ord]\n  tpr &lt;- cumsum(y) / sum(y)\n  fpr &lt;- cumsum(!y) / sum(!y)\n  plot(c(0, fpr), c(0, tpr), type = \"l\", xlab = \"FPR\", ylab = \"TPR\", main = \"ROC (modelo completo)\")\n  abline(0, 1, lty = 2)\n}\n\n\n\n\n\n\n\n\n\nLa curva ROC representa el compromiso entre sensibilidad y especificidad para todos los posibles umbrales de clasificación.\nEn este caso, la curva se sitúa claramente por encima de la diagonal aleatoria, lo que confirma que el modelo completo posee capacidad predictiva real.\nEl área bajo la curva (AUC ≈ 0.84) indica que, en promedio, el modelo asigna mayor probabilidad a un juego popular que a uno no popular en aproximadamente el 84% de las comparaciones.\nEsto resulta relevante para el objetivo del proyecto: identificar qué características incrementan la probabilidad de éxito en términos de propietarios.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Modelo de Regresión Logística</span>"
+    ]
+  },
+  {
+    "objectID": "07-regresion-logistica.html#matriz-de-confusión-modelo-completo-umbral-0.5",
+    "href": "07-regresion-logistica.html#matriz-de-confusión-modelo-completo-umbral-0.5",
+    "title": "7  Modelo de Regresión Logística",
+    "section": "7.9 Matriz de confusión (modelo completo, umbral 0.5)",
+    "text": "7.9 Matriz de confusión (modelo completo, umbral 0.5)\n\n\nMostrar código\nthr &lt;- 0.5\nyhat &lt;- p_full &gt;= thr\ntab &lt;- table(Real = test$popular, Pred = yhat)\nknitr::kable(tab)\n\n\n\n\n\n\nFALSE\nTRUE\n\n\n\n\nFALSE\n4834\n53\n\n\nTRUE\n432\n96\n\n\n\n\n\nLa matriz de confusión permite observar el comportamiento del modelo bajo un umbral estándar de 0.5.\nSe aprecia que:\n\nLa mayoría de juegos no populares son correctamente clasificados (muchos verdaderos negativos).\nSin embargo, el modelo identifica solo una fracción limitada de los juegos realmente populares (96 verdaderos positivos frente a 432 falsos negativos).\n\nEsto refleja que el umbral 0.5 no es óptimo en contextos desbalanceados, ya que el modelo tiende a favorecer la clase mayoritaria.\nDesde un punto de vista de negocio, sería preferible ajustar el umbral para aumentar la detección de títulos con potencial de éxito, incluso a costa de incrementar algunos falsos positivos, dependiendo del objetivo estratégico (marketing, inversión o recomendación).",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Modelo de Regresión Logística</span>"
+    ]
+  },
+  {
+    "objectID": "07-regresion-logistica.html#conclusión",
+    "href": "07-regresion-logistica.html#conclusión",
+    "title": "7  Modelo de Regresión Logística",
+    "section": "7.10 Conclusión",
+    "text": "7.10 Conclusión\nEn este capítulo se ha formulado un modelo de regresión logística para estimar la probabilidad de que un juego sea “popular” (popular), definido de forma operativa como pertenecer al top 10% de valoraciones positivas dentro del dataset preparado. Esta definición permite convertir la pregunta de negocio “¿podemos anticipar qué juegos alcanzarán alta popularidad?” en un problema de clasificación reproducible y evaluable.\nEl modelo se ha interpretado mediante odds ratios (OR), lo que facilita una lectura aplicada: valores OR &gt; 1 indican aumento de las odds de alta popularidad manteniendo el resto constante, mientras que OR &lt; 1 indica disminución. La comparación entre un modelo simple y uno completo cuantifica el valor añadido de incorporar predictores adicionales (plataformas y metadatos agregados), y el AIC ofrece un criterio de ajuste que penaliza complejidad.\nDado el desbalance inherente a un objetivo “top 10%”, la evaluación no debe basarse únicamente en accuracy. Por ello se reportan métricas como AUC (ROC) y F1, que capturan mejor la capacidad discriminativa y el balance entre falsos positivos y falsos negativos.\nEn conjunto, la regresión logística complementa al modelo lineal: mientras el capítulo 6 aporta explicación e interpretación en un objetivo continuo, este capítulo aporta una herramienta predictiva para separar juegos con alta probabilidad de popularidad, cerrando el ciclo desde el planteamiento de preguntas de negocio hasta la modelización aplicada.",
+    "crumbs": [
+      "Modelos",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Modelo de Regresión Logística</span>"
+    ]
+  },
+  {
+    "objectID": "referencias.html",
+    "href": "referencias.html",
+    "title": "8  Referencias",
+    "section": "",
+    "text": "8.1 Librerías de R utilizadas",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Referencias</span>"
+    ]
+  },
+  {
+    "objectID": "referencias.html#librerías-de-r-utilizadas",
+    "href": "referencias.html#librerías-de-r-utilizadas",
+    "title": "8  Referencias",
+    "section": "",
+    "text": "ggplot2: Wickham, H. (2016).\nggplot2: Elegant Graphics for Data Analysis. Springer.\nDisponible en: https://ggplot2.tidyverse.org/\ndplyr: Wickham, H., François, R., Henry, L., & Müller, K. (2023).\ndplyr: A Grammar of Data Manipulation.\nDisponible en: https://dplyr.tidyverse.org/\ncaret: Kuhn, M. (2023).\ncaret: Classification and Regression Training. R package.\nDisponible en: https://cran.r-project.org/package=caret\nbroom: Robinson, D., Hayes, A., & Couch, S. (2023).\nbroom: Convert Statistical Objects into Tidy Tibbles.\nDisponible en: https://cran.r-project.org/package=broom\npROC: Robin, X., Turck, N., Hainard, A., et al. (2011).\npROC: Display and Analyze ROC Curves.\nDisponible en: https://cran.r-project.org/package=pROC\nResourceSelection: Lele, S. R., & Keim, J. L. (2022).\nResourceSelection: Resource Selection (Probability) Functions for Use-Availability Data.\nDisponible en: https://cran.r-project.org/package=ResourceSelection",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Referencias</span>"
+    ]
+  },
+  {
+    "objectID": "referencias.html#recursos-y-documentación-en-línea",
+    "href": "referencias.html#recursos-y-documentación-en-línea",
+    "title": "8  Referencias",
+    "section": "8.2 Recursos y documentación en línea",
+    "text": "8.2 Recursos y documentación en línea\n\nDocumentación oficial de Quarto.\nDisponible en: https://quarto.org/docs/\nR Core Team (2024).\nR: A Language and Environment for Statistical Computing.\nDisponible en: https://www.r-project.org/\nTidyverse Documentation.\nDisponible en: https://www.tidyverse.org/",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Referencias</span>"
+    ]
+  },
+  {
+    "objectID": "referencias.html#bibliografía-metodológica",
+    "href": "referencias.html#bibliografía-metodológica",
+    "title": "8  Referencias",
+    "section": "8.3 Bibliografía metodológica",
+    "text": "8.3 Bibliografía metodológica\n\nJames, G., Witten, D., Hastie, T., & Tibshirani, R. (2021).\nAn Introduction to Statistical Learning (2nd ed.). Springer.\nDisponible en: https://www.statlearning.com/\nHosmer, D. W., Lemeshow, S., & Sturdivant, R. X. (2013).\nApplied Logistic Regression (3rd ed.). Wiley.\nhttps://doi.org/10.1002/9781118548387\nBreusch, T. S., & Pagan, A. R. (1979).\nA simple test for heteroscedasticity and random coefficient variation.\nEconometrica, 47(5), 1287–1294.\nhttps://doi.org/10.2307/1911963",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Referencias</span>"
+    ]
+  },
+  {
+    "objectID": "referencias.html#otros-materiales",
+    "href": "referencias.html#otros-materiales",
+    "title": "8  Referencias",
+    "section": "8.4 Otros materiales",
+    "text": "8.4 Otros materiales\n\nApuntes y materiales docentes de la asignatura Fundamentos de Ciencia de Datos.\nDataset extraído de Kaggle y fuentes públicas relacionadas con videojuegos en Steam.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Referencias</span>"
+    ]
+  }
+]

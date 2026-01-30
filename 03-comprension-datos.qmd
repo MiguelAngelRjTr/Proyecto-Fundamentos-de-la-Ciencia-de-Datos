@@ -1,0 +1,127 @@
+---
+title: "Comprensión de los Datos"
+---
+
+```{r}
+#| label: setup-prep
+#| echo: true
+library(readr)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+library(stringr)
+library(kableExtra)
+
+steam <- read_csv("data/steam.csv")
+```
+
+## Evaluación inicial de Dataset
+
+A continuación, se realiza una evaluación inicial del dataset cargado desde el archivo CSV. Esta evaluación incluye información básica como número de filas y columnas, nombres de las columnas y su estructura general.
+
+**Visualización Inicial del Dataset**
+
+```{r}
+#| label: overall-view
+#| echo: true
+# Mostrar las primeras filas del dataset
+head(steam)
+```
+
+**Dimensiones del dataset**
+
+```{r}
+#| label: dim
+#| echo: true
+n_filas <- nrow(steam)
+n_columnas <- ncol(steam)
+```
+
+El conjunto de datos contiene `r n_filas` observaciones (videojuegos) y `r n_columnas` variables. A continuación se muestra un resumen numérico global y el porcentaje de valores ausentes por columna.
+
+```{r}
+#| label: num_summary&NA
+#| echo: true
+
+num_df <- steam[, sapply(steam, is.numeric), drop = FALSE]
+prop_na = round(100 * colMeans(is.na(steam)), 2)
+
+summary(num_df)
+prop_na
+```
+
+El resumen numérico confirma que varias variables presentan distribuciones fuertemente asimétricas, especialmente aquellas relacionadas con la popularidad del juego (`positive_ratings`, `negative_ratings`) y con el tiempo de uso (`average_playtime`, `median_playtime`). En estos casos, la diferencia entre la mediana y el máximo indica la presencia de colas largas: la mayoría de títulos acumulan pocas valoraciones, mientras que un subconjunto reducido concentra valores extremadamente altos.
+
+Asimismo, se observa una proporción relevante de ceros en variables como `required_age` y tiempos de juego, lo que es coherente con títulos sin restricción de edad o con baja actividad registrada.
+
+En cuanto a calidad de datos, el porcentaje de valores ausentes es prácticamente nulo en la mayoría de columnas, con únicamente una fracción marginal en `publisher`. Esto sugiere que el dataset es adecuado para análisis predictivo sin necesidad de imputaciones complejas.
+
+Dado este comportamiento, resulta justificada la transformación logarítmica aplicada posteriormente al target, con el objetivo de estabilizar la varianza y reducir el efecto de valores extremos en el modelado.
+
+**Nombres de las Columnas**
+
+```{r}
+#| label: columns
+#| echo: true
+# Listar nombres de las columnas
+colnames(steam)
+```
+
+Los nombres de las columnas son descriptivos, lo que facilita identificar las variables y su propósito dentro del análisis.
+
+**Estructura de las Variables**
+
+```{r}
+#| label: data-struc
+#| echo: true
+# Ver estructura del dataset
+str(steam)
+```
+
+Se identificaron variables categóricas y numéricas.
+
+## Resumen de las variables
+
+De las 18 variables totales, varias se han importado como tipo numérico (double), es decir, han quedado almacenadas como variables numéricas discretas en muchos casos (por ejemplo, recuentos como positive_ratings, negative_ratings o achievements). Sin embargo, en algunos casos su naturaleza original es de variable numérica continua, como el precio (price) o, según la interpretación, medidas cuantitativas como los tiempos de juego en minutos (average_playtime y median_playtime). Además, el conjunto de datos incluye múltiples variables categóricas (character), entre ellas developer, publisher y varias variables multietiqueta (platforms, categories, genres, steamspy_tags) codificadas como listas de etiquetas separadas por punto y coma. Finalmente, la variable owners no se recoge como un número exacto, sino como un intervalo de propietarios estimados, por lo que debe tratarse como variable ordinal más que como magnitud numérica precisa.
+
+A continuación, se presenta un resumen detallado de cada variable y una breve descripción:
+
+```{r}
+#| label: dic_variables
+#| echo: true
+
+# Diccionario de variables Steam)
+dict <- tibble::tribble(
+  ~variable,           ~tipo,                    ~descripcion,
+  "appi",             "Numérica discreta",      "Identificador único del juego.",
+  "name",              "Categórica nominal",     "Nombre comercial del juego.",
+  "release_date",      "Fecha",                  "Fecha de lanzamiento en Steam (cuando está disponible).",
+  "english",           "Binaria (0/1)",          "Indicador de disponibilidad en inglés.",
+  "developer",         "Categórica nominal",     "Estudio o desarrollador principal.",
+  "publisher",         "Categórica nominal",     "Editor o distribuidor.",
+  "platforms",         "Categórica nominal",     "Plataformas soportadas (p.ej., windows;mac;linux) codificadas como texto.",
+  "required_age",      "Numérica discreta",      "Edad mínima requerida o recomendada.",
+  "categories",        "Categórica nominal",     "Categorías del juego (lista separada por ';').",
+  "genres",            "Categórica nominal",     "Géneros del juego (lista separada por ';').",
+  "steamspy_tags",     "Categórica nominal",     "Etiquetas agregadas (SteamSpy), codificadas como texto.",
+  "achievements",      "Numérica discreta",      "Número de logros disponibles.",
+  "positive_ratings",  "Numérica discreta",      "Recuento de valoraciones positivas agregadas.",
+  "negative_ratings",  "Numérica discreta",      "Recuento de valoraciones negativas agregadas.",
+  "average_playtime",  "Numérica discreta",      "Tiempo medio de juego por usuario (minutos).",
+  "median_playtime",   "Numérica discreta",      "Tiempo mediano de juego por usuario (minutos).",
+  "owners",            "Categórica ordinal",     "Intervalo estimado de propietarios (p.ej., 0-20000, 20000-50000).",
+  "price",             "Numérica continua",      "Precio del juego."
+)
+
+dict %>%
+  transmute(
+    `Nombre de la Variable` = variable,
+    `Tipo` = tipo,
+    `Descripción` = descripcion
+  ) %>%
+  knitr::kable(format = "html", escape = TRUE) %>%
+  kable_styling(full_width = TRUE, bootstrap_options = c("striped")) %>%
+  column_spec(1, width = "20em") %>%
+  column_spec(2, width = "14em") %>%
+  column_spec(3, width = "40em")
+```

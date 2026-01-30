@@ -1,0 +1,62 @@
+---
+title: "Referencias"
+---
+
+## Librerías de R utilizadas
+
+1. **ggplot2**: Wickham, H. (2016).  
+   *ggplot2: Elegant Graphics for Data Analysis*. Springer.  
+   Disponible en: https://ggplot2.tidyverse.org/
+
+2. **dplyr**: Wickham, H., François, R., Henry, L., & Müller, K. (2023).  
+   *dplyr: A Grammar of Data Manipulation*.  
+   Disponible en: https://dplyr.tidyverse.org/
+
+3. **caret**: Kuhn, M. (2023).  
+   *caret: Classification and Regression Training*. R package.  
+   Disponible en: https://cran.r-project.org/package=caret
+
+4. **broom**: Robinson, D., Hayes, A., & Couch, S. (2023).  
+   *broom: Convert Statistical Objects into Tidy Tibbles*.  
+   Disponible en: https://cran.r-project.org/package=broom
+
+5. **pROC**: Robin, X., Turck, N., Hainard, A., et al. (2011).  
+   *pROC: Display and Analyze ROC Curves*.  
+   Disponible en: https://cran.r-project.org/package=pROC
+
+6. **ResourceSelection**: Lele, S. R., & Keim, J. L. (2022).  
+   *ResourceSelection: Resource Selection (Probability) Functions for Use-Availability Data*.  
+   Disponible en: https://cran.r-project.org/package=ResourceSelection
+
+## Recursos y documentación en línea
+
+7. **Documentación oficial de Quarto**.  
+   Disponible en: https://quarto.org/docs/
+
+8. **R Core Team (2024)**.  
+   *R: A Language and Environment for Statistical Computing*.  
+   Disponible en: https://www.r-project.org/
+
+9. **Tidyverse Documentation**.  
+   Disponible en: https://www.tidyverse.org/
+
+## Bibliografía metodológica
+
+10. James, G., Witten, D., Hastie, T., & Tibshirani, R. (2021).  
+    *An Introduction to Statistical Learning* (2nd ed.). Springer.  
+    Disponible en: https://www.statlearning.com/
+
+11. Hosmer, D. W., Lemeshow, S., & Sturdivant, R. X. (2013).  
+    *Applied Logistic Regression* (3rd ed.). Wiley.  
+    https://doi.org/10.1002/9781118548387
+
+12. Breusch, T. S., & Pagan, A. R. (1979).  
+    A simple test for heteroscedasticity and random coefficient variation.  
+    *Econometrica*, 47(5), 1287–1294.  
+    https://doi.org/10.2307/1911963
+
+## Otros materiales
+
+13. Apuntes y materiales docentes de la asignatura *Fundamentos de Ciencia de Datos*.
+
+14. Dataset extraído de Kaggle y fuentes públicas relacionadas con videojuegos en Steam.

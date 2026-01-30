@@ -1,0 +1,36 @@
+---
+title: "Portada"
+---
+```{=html}
+<div class="cover-wrap">
+
+<img src="images/UAX.png" class="cover-logo" alt="UAX logo"/>
+
+<div class="cover-title-card">
+  <h1>Factores que afectan al éxito en Steam</h1>
+</div>
+
+<div class="cover-bottom">
+
+  <div>
+    <img src="images/Steam.png" class="cover-img" alt="Imagen portada"/>
+  </div>
+
+  <div class="cover-meta">
+    <p><span class="label">Autor:</span> Miguel Angel Rojas Torres</p>
+    <p><span class="label">Curso:</span> Fundamentos de Ciencia de Datos</p>
+    <p><span class="label">Profesora:</span> Dra. Romy Rodríguez Ravines</p>
+    <p><span class="label">Fecha:</span> 30/01/2026</p>
+
+    <br>
+
+    <p>
+      Este libro documenta un flujo completo de Ciencia de Datos aplicado a un catálogo
+      de videojuegos de Steam: comprensión, EDA, preparación y modelización supervisada
+      (regresión lineal y logística), con evaluación y discusión de resultados.
+    </p>
+  </div>
+
+</div>
+</div>
+```

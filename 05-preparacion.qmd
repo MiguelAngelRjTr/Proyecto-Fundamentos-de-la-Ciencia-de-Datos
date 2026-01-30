@@ -1,0 +1,230 @@
+---
+title: "Preparación de los Datos"
+---
+
+```{r}
+#| label: setup-preparacion
+#| include: false
+
+pkgs <- c("dplyr", "stringr", "lubridate", "ggplot2", "tidyr", "knitr")
+missing_pkgs <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
+if (length(missing_pkgs) > 0) {
+  stop(
+    "Faltan paquetes necesarios: ", paste(missing_pkgs, collapse = ", "),
+    ". Instálalos con install.packages(...) y vuelve a renderizar."
+  )
+}
+
+library(dplyr)
+library(stringr)
+library(lubridate)
+library(ggplot2)
+library(tidyr)
+library(knitr)
+
+# Lectura (readr si está disponible; si no, base R)
+if (requireNamespace("readr", quietly = TRUE)) {
+  steam <- readr::read_csv("data/steam.csv", show_col_types = FALSE)
+} else {
+  steam <- read.csv("data/steam.csv", stringsAsFactors = FALSE)
+}
+
+# --- Utilidades ---
+parse_owners <- function(x) {
+  x <- as.character(x)
+  parts <- strsplit(x, "-", fixed = TRUE)
+  low  <- suppressWarnings(as.numeric(vapply(parts, function(p) if (length(p) >= 1) p[1] else NA_character_, character(1))))
+  high <- suppressWarnings(as.numeric(vapply(parts, function(p) if (length(p) >= 2) p[2] else NA_character_, character(1))))
+  tibble(owners_low = low, owners_high = high, owners_mid = (low + high)/2)
+}
+
+count_labels <- function(x) {
+  x <- as.character(x)
+  out <- ifelse(is.na(x) | trimws(x) == "", 0L, str_count(x, ";") + 1L)
+  as.integer(out)
+}
+
+parse_release_date <- function(x) {
+  x <- as.character(x)
+  d <- suppressWarnings(ymd(x))
+  if (all(is.na(d))) d <- suppressWarnings(mdy(x))
+  if (all(is.na(d))) d <- suppressWarnings(dmy(x))
+  d
+}
+
+iqr_outliers <- function(x) {
+  x <- x[is.finite(x)]
+  if (length(x) < 10) return(c(outliers = NA_integer_, pct = NA_real_))
+  q1 <- quantile(x, 0.25, na.rm = TRUE)
+  q3 <- quantile(x, 0.75, na.rm = TRUE)
+  iqr <- q3 - q1
+  lo <- q1 - 1.5 * iqr
+  hi <- q3 + 1.5 * iqr
+  o <- sum(x < lo | x > hi)
+  c(outliers = o, pct = 100 * o / length(x))
+}
+```
+
+## Objetivo de la preparación
+
+En este capítulo se construye un dataset analítico **coherente y reproducible** para los capítulos de modelado (06 y 07), a partir de `steam.csv`.
+
+Las decisiones de preparación se limitan a lo estrictamente necesario para:
+
+- garantizar **consistencia** (tipos, rangos y duplicados),
+- reducir problemas numéricos en variables con colas largas (transformaciones `log1p`),
+- generar predictores simples y trazables (p. ej., indicadores de plataforma),
+- persistir un único conjunto final (`data/steam_model.rds`) que se reutiliza en ambos modelos.
+
+## Calidad de datos (duplicados y valores faltantes)
+
+```{r}
+#| label: qc-duplicados
+n_dup <- sum(duplicated(steam))
+cat("Registros duplicados (fila completa):", n_dup, "\n")
+```
+
+```{r}
+#| label: qc-missing
+missing_tbl <- steam %>%
+  summarise(across(everything(), ~sum(is.na(.)))) %>%
+  pivot_longer(cols = everything(), names_to = "variable", values_to = "na") %>%
+  mutate(pct = 100 * na / nrow(steam)) %>%
+  arrange(desc(na))
+
+kable(head(missing_tbl, 15), digits = 2)
+```
+
+En base al EDA, la proporción de faltantes es reducida en las variables usadas en modelado. Por simplicidad y reproducibilidad, el dataset final se filtra por **completitud** únicamente en el subconjunto de variables seleccionadas.
+
+## Tipado y variables derivadas
+
+Transformaciones aplicadas:
+
+- **Fecha:** `release_date` se convierte a fecha (parsing robusto) y se extrae `release_year`.
+- **Plataformas:** indicadores booleanos (`windows`, `mac`, `linux`) derivados desde `platforms` (texto multietiqueta).
+- **Multietiqueta:** recuentos `n_categories`, `n_genres`, `n_tags` desde separador `;`.
+- **Owners:** se parsea el rango `owners` (p. ej. `"20000-50000"`) y se obtiene `owners_low/high/mid`.
+
+```{r}
+#| label: features-basicas
+steam <- steam %>%
+  mutate(
+    release_date = parse_release_date(release_date),
+    release_year = year(release_date),
+
+    windows = str_detect(platforms, "windows"),
+    mac     = str_detect(platforms, "mac"),
+    linux   = str_detect(platforms, "linux"),
+
+    n_categories = count_labels(categories),
+    n_genres     = count_labels(genres),
+    n_tags       = count_labels(steamspy_tags)
+  ) %>%
+  bind_cols(parse_owners(.$owners))
+```
+
+## Consideración de valores extremos
+
+En variables de mercado/plataforma (p. ej. `positive_ratings`, `owners`) es habitual observar distribuciones altamente asimétricas. Se realiza una detección **descriptiva** con regla IQR (sin eliminar observaciones automáticamente).
+
+```{r}
+#| label: outliers-iqr
+num_vars <- intersect(c("price", "positive_ratings", "negative_ratings", "owners_mid", "achievements"), names(steam))
+
+out_tbl <- lapply(num_vars, function(v) {
+  r <- iqr_outliers(steam[[v]])
+  data.frame(variable = v, outliers = r["outliers"], pct = r["pct"], row.names = NULL)
+}) %>% bind_rows()
+
+kable(out_tbl, digits = 2)
+```
+
+## Transformaciones numéricas para modelado
+
+Las variables de conteo (colas pesadas) se transforman con `log1p` para estabilizar escala y reducir la influencia de extremos. Estas transformaciones se usan explícitamente en los capítulos de modelado.
+
+```{r}
+#| label: transformaciones
+steam <- steam %>%
+  mutate(
+    log_price        = log1p(price),
+    log_achievements = log1p(achievements),
+    log_pos_ratings  = log1p(positive_ratings),
+    log_neg_ratings  = log1p(negative_ratings),
+    english          = factor(english, levels = c(0, 1))
+  )
+```
+
+## Variables categóricas
+
+En este proyecto se prioriza un modelado interpretable. Variables categóricas de alta cardinalidad (p. ej. listas completas de géneros/tags como texto) se resumen mediante recuentos (`n_genres`, `n_tags`) en lugar de one-hot encoding, para evitar una expansión excesiva de dimensionalidad.
+
+Los indicadores `windows/mac/linux` se obtienen a partir de `platforms` mediante reglas de presencia/ausencia (derivación reproducible y trazable).
+
+## Dataset final para modelado
+
+Se construye el conjunto final `steam_model`, que alimentará:
+
+- **Regresión lineal (Cap. 6):** `log_pos_ratings`.
+- **Regresión logística (Cap. 7):** `popular` definido como top 10% por `positive_ratings`.
+
+```{r}
+#| label: steam-model
+steam_model <- steam %>%
+  transmute(
+    # Targets
+    positive_ratings,
+    log_pos_ratings,
+
+    # Predictores (originales + transformados cuando aplica)
+    price,
+    log_price,
+    achievements,
+    log_achievements,
+
+    required_age,
+    english,
+    release_year,
+
+    windows, mac, linux,
+    n_categories, n_genres, n_tags
+  ) %>%
+  filter(complete.cases(.))
+
+thr_pop <- quantile(steam_model$positive_ratings, 0.90, names = FALSE)
+steam_model <- steam_model %>%
+  mutate(popular = positive_ratings >= thr_pop)
+
+c(n = nrow(steam_model), pct_popular = mean(steam_model$popular))
+```
+
+La variable `popular` se define como una categorización operativa (top 10% por `positive_ratings`) para abordar la pregunta de negocio de clasificación. Esta definición no es una “verdad” externa, sino un criterio reproducible dentro del dataset que permite evaluar la capacidad predictiva a partir de atributos de catálogo.
+
+## Persistencia del dataset preparado
+
+```{r}
+#| label: guardar-steam-model
+#| echo: true
+
+saveRDS(steam_model, file.path("data", "steam_model.rds"))
+
+# Export opcional a CSV
+if (requireNamespace("readr", quietly = TRUE)) {
+  readr::write_csv(steam_model, file.path("data", "steam_model.csv"))
+} else {
+  write.csv(steam_model, file.path("data", "steam_model.csv"), row.names = FALSE)
+}
+```
+
+## Conclusión
+
+En esta etapa se ha construido un conjunto de datos de modelado (`steam_model`) consistente y reproducible a partir del dataset original de Steam. Dado lo observado en el EDA, la presencia de valores faltantes relevantes es marginal; por ello se ha optado por un criterio conservador de filtrado únicamente en las variables necesarias para los modelos, evitando imputaciones que podrían introducir sesgo.
+
+Se han generado predictores derivados con sentido de negocio y estadístico (p. ej., recuentos de géneros/categorías/etiquetas y la derivación de indicadores de plataforma a partir de `platforms`) y se han aplicado transformaciones logarítmicas (`log1p`) a variables con colas largas para mejorar la estabilidad numérica y la interpretabilidad de los modelos.
+
+Finalmente, se han definido explícitamente los objetivos para las tareas posteriores:
+- Un objetivo continuo (`log_pos_ratings`) para analizar factores asociados a mayor popularidad en términos de valoraciones positivas (Cap. 6).
+- Un objetivo binario (`popular`, definido operativamente como top 10% por valoraciones positivas) para un problema de clasificación orientado a predicción (Cap. 7).
+
+El dataset preparado se guarda en disco para asegurar trazabilidad y reproducibilidad, y constituye la base común para los capítulos de modelado.

@@ -1,0 +1,331 @@
+---
+title: "Modelo de Regresión Logística"
+---
+
+```{r}
+#| label: logit-setup
+#| include: false
+
+pkgs <- c("dplyr", "ggplot2")
+missing_pkgs <- pkgs[!vapply(pkgs, requireNamespace, logical(1), quietly = TRUE)]
+if (length(missing_pkgs) > 0) {
+  stop("Faltan paquetes necesarios: ", paste(missing_pkgs, collapse = ", "),
+       ". Instálalos con install.packages(...) y vuelve a renderizar.")
+}
+library(dplyr)
+library(ggplot2)
+
+steam_model <- readRDS("data/steam_model.rds")
+
+# Métricas básicas
+acc <- function(y, p, thr = 0.5) mean((p >= thr) == y)
+precision <- function(y, p, thr = 0.5) {
+  yhat <- (p >= thr)
+  tp <- sum(yhat & y); fp <- sum(yhat & !y)
+  if ((tp + fp) == 0) return(NA_real_)
+  tp / (tp + fp)
+}
+recall <- function(y, p, thr = 0.5) {
+  yhat <- (p >= thr)
+  tp <- sum(yhat & y); fn <- sum(!yhat & y)
+  if ((tp + fn) == 0) return(NA_real_)
+  tp / (tp + fn)
+}
+f1 <- function(y, p, thr = 0.5) {
+  pr <- precision(y, p, thr); rc <- recall(y, p, thr)
+  if (is.na(pr) || is.na(rc) || (pr + rc) == 0) return(NA_real_)
+  2 * pr * rc / (pr + rc)
+}
+
+# AUC (pROC si existe; si no, AUC por regla del trapecio)
+auc_manual <- function(y, p) {
+  ord <- order(p, decreasing = TRUE)
+  y <- y[ord]; p <- p[ord]
+  tpr <- cumsum(y) / sum(y)
+  fpr <- cumsum(!y) / sum(!y)
+  # añadir (0,0) al inicio
+  tpr <- c(0, tpr); fpr <- c(0, fpr)
+  sum((fpr[-1] - fpr[-length(fpr)]) * (tpr[-1] + tpr[-length(tpr)]) / 2)
+}
+```
+
+## Justificación del modelo
+
+Se plantea una **regresión logística** para estimar la probabilidad de que un juego sea **popular** (variable binaria `popular` definida en la preparación) a partir de atributos de catálogo.
+
+**Nota metodológica (evitar leakage):** `popular` se construye usando `positive_ratings`. Por tanto, **no** se utiliza `positive_ratings` ni derivadas directas como predictor.
+
+Este capítulo responde a: “¿es posible predecir si un juego será altamente popular a partir de sus características?”. Dado que `popular` es top 10%, el problema es desbalanceado; por ello se complementa la exactitud con AUC y F1.
+
+## Distribución del objetivo
+
+```{r}
+#| label: logit-y-dist
+#| echo: true
+
+prop.table(table(steam_model$popular))
+```
+
+```{r}
+#| label: logit-y-bar
+#| echo: true
+
+ggplot(steam_model, aes(x = popular)) +
+  geom_bar(fill = "#1f77b4") +
+  labs(x = "Popular (top 10%)", y = "Número de juegos", title = "Distribución del objetivo")
+```
+
+## Partición entrenamiento / test
+
+```{r}
+#| label: logit-split
+#| echo: true
+
+set.seed(123)
+n <- nrow(steam_model)
+idx <- sample.int(n, size = floor(0.8 * n))
+
+train <- steam_model[idx, ]
+test  <- steam_model[-idx, ]
+
+# Centrado del año en entrenamiento
+center_year <- mean(train$release_year, na.rm = TRUE)
+train <- train %>% mutate(release_year_c = release_year - center_year)
+test  <- test  %>% mutate(release_year_c = release_year - center_year)
+
+c(n_train = nrow(train), n_test = nrow(test))
+```
+
+## Formulación y ajuste del modelo
+
+Se comparan dos especificaciones:
+
+- **Modelo simple (núcleo):** precio, logros, edad requerida, idioma, año.
+- **Modelo completo:** añade plataformas y recuentos de metadatos.
+
+```{r}
+#| label: logit-fit
+#| echo: true
+
+glm_simple <- glm(
+  popular ~ log_price + log_achievements + required_age + english + release_year_c,
+  data = train,
+  family = binomial()
+)
+
+glm_full <- glm(
+  popular ~ log_price + log_achievements + required_age + english + release_year_c +
+    windows + mac + linux + n_categories + n_genres + n_tags,
+  data = train,
+  family = binomial()
+)
+
+summary(glm_full)
+```
+
+## Bondad de ajuste (AIC) y test HL
+
+```{r}
+#| label: logit-gof
+#| echo: true
+
+gof <- data.frame(
+  modelo = c("simple", "completo"),
+  AIC = c(AIC(glm_simple), AIC(glm_full))
+)
+
+knitr::kable(gof, digits = 2)
+
+# Hosmer-Lemeshow
+if (requireNamespace("ResourceSelection", quietly = TRUE)) {
+  hl <- ResourceSelection::hoslem.test(train$popular, fitted(glm_full), g = 10)
+  hl_tbl <- data.frame(
+    estadistico = unname(hl$statistic),
+    gl = unname(hl$parameter),
+    p_value = hl$p.value
+  )
+  knitr::kable(hl_tbl, digits = 5)
+} else {
+  cat("Paquete 'ResourceSelection' no instalado: se omite Hosmer-Lemeshow.\n")
+}
+```
+
+El criterio AIC permite comparar modelos logísticos penalizando la complejidad: un valor menor indica un mejor equilibrio entre ajuste y parsimonia.
+
+En este caso, el modelo **completo** presenta un AIC inferior al modelo simple (10545 frente a 11397), lo que sugiere que incorporar más variables explicativas mejora la capacidad del modelo para describir la probabilidad de que un juego sea popular.
+
+Por otro lado, el test de Hosmer–Lemeshow evalúa si las probabilidades predichas se calibran adecuadamente con los datos observados. El resultado obtenido (p-value = 0.54) indica que **no hay evidencia estadística de mal ajuste**, por lo que el modelo completo presenta una calibración global razonable.
+
+En conjunto, estos indicadores respaldan el uso del modelo completo como la especificación más adecuada para el análisis predictivo.
+
+## Interpretación (odds ratios)
+
+Se reportan **odds ratios (OR)**: \(\text{OR}=e^{\beta}\). Un OR > 1 indica aumento en las odds de ser popular manteniendo el resto constante.
+
+```{r}
+#| label: logit-or
+#| echo: true
+
+# Odds Ratios (OR) e IC 95% a partir de los coeficientes (log-odds).
+# Se fuerza el tipo numérico para evitar problemas de clase al exponenciar.
+coefs_or <- broom::tidy(glm_full, conf.int = TRUE) |>
+  dplyr::mutate(
+    estimate  = suppressWarnings(as.numeric(estimate)),
+    conf.low  = suppressWarnings(as.numeric(conf.low)),
+    conf.high = suppressWarnings(as.numeric(conf.high))
+  ) |>
+  dplyr::filter(term != "(Intercept)") |>
+  dplyr::transmute(
+    Variable = term,
+    OR = exp(estimate),
+    CI_95_inf = exp(conf.low),
+    CI_95_sup = exp(conf.high),
+    `p-valor` = p.value
+  ) |>
+  dplyr::arrange(dplyr::desc(OR))
+
+knitr::kable(
+  coefs_or, digits = 3,
+  caption = "Odds Ratios (OR) e intervalo de confianza del 95% (modelo logístico)"
+)
+```
+
+Los odds ratios (OR) permiten cuantificar el efecto de cada variable sobre la probabilidad de que un juego pertenezca al grupo de alta popularidad, manteniendo constantes el resto de factores.
+
+En los resultados observamos que:
+
+- **Número de tags (`n_tags`)** presenta un OR muy elevado (> 100), lo que sugiere que los juegos con mayor riqueza descriptiva y categorización tienden a ser mucho más propensos a alcanzar popularidad.
+
+- **Precio (`log_price`)** tiene un OR > 1 (≈ 1.43), indicando que, dentro del rango observado, precios más altos se asocian con una mayor probabilidad de popularidad, posiblemente porque reflejan productos de mayor presupuesto o valor percibido.
+
+- Variables como **mac** o **linux** muestran efectos positivos moderados (OR entre 1.1 y 1.4), lo que podría interpretarse como una ventaja asociada a una mayor compatibilidad multiplataforma.
+
+- En cambio, la variable **english** no resulta significativa (p > 0.05), lo que indica que el idioma, en este dataset, no discrimina claramente entre juegos populares y no populares.
+
+Estos resultados son coherentes con la lógica de negocio: la popularidad parece estar impulsada principalmente por factores de visibilidad, contenido y posicionamiento del producto más que por características técnicas menores.
+
+Cabe destacar que algunas variables binarias como `windowsTRUE` presentan intervalos extremadamente amplios, lo que sugiere inestabilidad en la estimación debido a baja variabilidad o desequilibrio en la muestra. Por ello, su interpretación debe hacerse con cautela.
+
+
+## Evaluación predictiva (test)
+
+```{r}
+#| label: logit-eval
+#| echo: true
+
+p_simple <- predict(glm_simple, newdata = test, type = "response")
+p_full   <- predict(glm_full,   newdata = test, type = "response")
+
+metrics <- rbind(
+  simple = c(
+    ACC = acc(test$popular, p_simple),
+    Precision = precision(test$popular, p_simple),
+    Recall = recall(test$popular, p_simple),
+    F1 = f1(test$popular, p_simple)
+  ),
+  full = c(
+    ACC = acc(test$popular, p_full),
+    Precision = precision(test$popular, p_full),
+    Recall = recall(test$popular, p_full),
+    F1 = f1(test$popular, p_full)
+  )
+)
+
+# AUC
+auc_s <- if (requireNamespace("pROC", quietly = TRUE)) {
+  as.numeric(pROC::auc(pROC::roc(test$popular, p_simple, quiet = TRUE)))
+} else auc_manual(test$popular, p_simple)
+
+auc_f <- if (requireNamespace("pROC", quietly = TRUE)) {
+  as.numeric(pROC::auc(pROC::roc(test$popular, p_full, quiet = TRUE)))
+} else auc_manual(test$popular, p_full)
+
+metrics <- cbind(metrics, AUC = c(simple = auc_s, full = auc_f))
+
+knitr::kable(round(metrics, 4))
+```
+
+Para evaluar la capacidad de generalización, se reportan métricas sobre el conjunto de test.
+
+Los resultados muestran:
+
+- Una **accuracy elevada (~0.91)**, esperable dado el fuerte desbalance de clases (solo ~10% son populares).
+- El modelo completo mejora ligeramente al simple en términos de **F1** (0.28 frente a 0.22), indicando mejor equilibrio entre precisión y sensibilidad.
+- El **AUC alcanza 0.84**, lo que refleja una buena capacidad discriminativa: el modelo distingue razonablemente entre juegos populares y no populares.
+
+Sin embargo, el recall sigue siendo relativamente bajo (< 0.20), lo que implica que el modelo detecta solo una parte de los juegos realmente populares. Esto es consistente con el carácter minoritario de la clase positiva.
+
+En términos de negocio, el modelo es útil como herramienta de priorización (ranking de probabilidad), aunque el umbral de decisión debería ajustarse según el coste de falsos negativos.
+
+## Curva ROC (modelo completo)
+
+```{r}
+#| label: logit-roc
+#| echo: true
+
+if (requireNamespace("pROC", quietly = TRUE)) {
+  roc_obj <- pROC::roc(test$popular, p_full, quiet = TRUE)
+
+  plot(
+    roc_obj,
+    main = "ROC (modelo completo)",
+    col = "#1f77b4",       # azul
+    lwd = 3,
+    legacy.axes = TRUE,    # ejes estándar: x=FPR, y=TPR
+    print.auc = TRUE,      # muestra AUC
+    auc.polygon = TRUE,
+    auc.polygon.col = adjustcolor("#1f77b4", alpha.f = 0.15),
+    grid = TRUE
+  )
+  abline(a = 0, b = 1, lty = 2, col = "grey50", lwd = 2)
+} else {
+  # ROC manual
+  ord <- order(p_full, decreasing = TRUE)
+  y <- test$popular[ord]
+  tpr <- cumsum(y) / sum(y)
+  fpr <- cumsum(!y) / sum(!y)
+  plot(c(0, fpr), c(0, tpr), type = "l", xlab = "FPR", ylab = "TPR", main = "ROC (modelo completo)")
+  abline(0, 1, lty = 2)
+}
+```
+
+La curva ROC representa el compromiso entre sensibilidad y especificidad para todos los posibles umbrales de clasificación.
+
+En este caso, la curva se sitúa claramente por encima de la diagonal aleatoria, lo que confirma que el modelo completo posee capacidad predictiva real.
+
+El área bajo la curva (AUC ≈ 0.84) indica que, en promedio, el modelo asigna mayor probabilidad a un juego popular que a uno no popular en aproximadamente el 84% de las comparaciones.
+
+Esto resulta relevante para el objetivo del proyecto: identificar qué características incrementan la probabilidad de éxito en términos de propietarios.
+
+## Matriz de confusión (modelo completo, umbral 0.5)
+
+```{r}
+#| label: logit-confusion
+#| echo: true
+
+thr <- 0.5
+yhat <- p_full >= thr
+tab <- table(Real = test$popular, Pred = yhat)
+knitr::kable(tab)
+```
+
+La matriz de confusión permite observar el comportamiento del modelo bajo un umbral estándar de 0.5.
+
+Se aprecia que:
+
+- La mayoría de juegos no populares son correctamente clasificados (muchos verdaderos negativos).
+- Sin embargo, el modelo identifica solo una fracción limitada de los juegos realmente populares (96 verdaderos positivos frente a 432 falsos negativos).
+
+Esto refleja que el umbral 0.5 no es óptimo en contextos desbalanceados, ya que el modelo tiende a favorecer la clase mayoritaria.
+
+Desde un punto de vista de negocio, sería preferible ajustar el umbral para aumentar la detección de títulos con potencial de éxito, incluso a costa de incrementar algunos falsos positivos, dependiendo del objetivo estratégico (marketing, inversión o recomendación).
+
+## Conclusión
+
+En este capítulo se ha formulado un modelo de **regresión logística** para estimar la probabilidad de que un juego sea “popular” (`popular`), definido de forma operativa como pertenecer al **top 10%** de valoraciones positivas dentro del dataset preparado. Esta definición permite convertir la pregunta de negocio “**¿podemos anticipar qué juegos alcanzarán alta popularidad?**” en un problema de clasificación reproducible y evaluable.
+
+El modelo se ha interpretado mediante **odds ratios (OR)**, lo que facilita una lectura aplicada: valores OR > 1 indican aumento de las odds de alta popularidad manteniendo el resto constante, mientras que OR < 1 indica disminución. La comparación entre un modelo simple y uno completo cuantifica el valor añadido de incorporar predictores adicionales (plataformas y metadatos agregados), y el AIC ofrece un criterio de ajuste que penaliza complejidad.
+
+Dado el desbalance inherente a un objetivo “top 10%”, la evaluación no debe basarse únicamente en accuracy. Por ello se reportan métricas como **AUC (ROC)** y **F1**, que capturan mejor la capacidad discriminativa y el balance entre falsos positivos y falsos negativos.
+
+En conjunto, la regresión logística complementa al modelo lineal: mientras el capítulo 6 aporta explicación e interpretación en un objetivo continuo, este capítulo aporta una herramienta predictiva para separar juegos con alta probabilidad de popularidad, cerrando el ciclo desde el planteamiento de preguntas de negocio hasta la modelización aplicada.
